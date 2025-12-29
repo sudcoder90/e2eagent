@@ -628,17 +628,28 @@ export const mockProjects: Project[] = [
     id: 'proj-1',
     name: 'New Feature on Cart Page',
     description: 'Q1 2026 cart page enhancements including improved UX for quantity updates, promo codes, and save for later functionality',
+    summary: 'This project focuses on enhancing the cart experience by improving quantity update flows, implementing robust promo code functionality, adding a "Save for Later" feature, and ensuring cart persistence across sessions. The goal is to reduce cart abandonment by 15% and improve conversion rates.',
     quarter: 'Q1 2026',
     testCases: cartPageTestCases,
     members: createMembers(),
     createdAt: new Date('2025-10-15'),
     lastUpdated: new Date(Date.now() - 3600000),
     status: 'active',
+    links: {
+      prd: 'https://docs.amazon.com/prd/cart-enhancements-q1-2026',
+      figma: 'https://figma.com/file/cart-page-redesign',
+    },
+    scheduledRun: {
+      nextRun: new Date(Date.now() + 3600000 * 2),
+      frequency: 'daily',
+      enabled: true,
+    },
   },
   {
     id: 'proj-2',
     name: 'Integrated Signup Flow Enhancement',
     description: 'Q2 2026 improvements to customer onboarding including social login, accessibility, and mobile optimization',
+    summary: 'Comprehensive overhaul of the signup flow to improve conversion rates and accessibility. Key features include Google and Apple OAuth integration, WCAG 2.1 AA compliance, mobile-first responsive design, and streamlined email verification. Target: 25% improvement in signup completion rates.',
     quarter: 'Q2 2026',
     testCases: signupFlowTestCases,
     members: [
@@ -649,11 +660,21 @@ export const mockProjects: Project[] = [
     createdAt: new Date('2025-11-01'),
     lastUpdated: new Date(Date.now() - 7200000),
     status: 'active',
+    links: {
+      prd: 'https://docs.amazon.com/prd/signup-flow-q2-2026',
+      figma: 'https://figma.com/file/signup-redesign',
+    },
+    scheduledRun: {
+      nextRun: new Date(Date.now() + 3600000 * 8),
+      frequency: 'weekly',
+      enabled: true,
+    },
   },
   {
     id: 'proj-3',
     name: 'Splashpage Enhancements',
     description: 'Homepage splash page improvements including performance optimization, pricing toggle, and responsive design',
+    summary: 'Performance-focused redesign of the homepage splash page. Key objectives include achieving LCP under 2.5s, implementing a monthly/annual pricing toggle with smooth animations, adding hero carousel functionality, and ensuring seamless responsive behavior across all device sizes.',
     quarter: 'Q1 2026',
     testCases: splashPageTestCases,
     members: [
@@ -665,6 +686,15 @@ export const mockProjects: Project[] = [
     createdAt: new Date('2025-09-20'),
     lastUpdated: new Date(Date.now() - 1800000),
     status: 'active',
+    links: {
+      prd: 'https://docs.amazon.com/prd/splashpage-q1-2026',
+      figma: 'https://figma.com/file/homepage-splash',
+    },
+    scheduledRun: {
+      nextRun: new Date(Date.now() + 3600000 * 24),
+      frequency: 'daily',
+      enabled: false,
+    },
   },
 ];
 
