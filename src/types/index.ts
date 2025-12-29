@@ -34,18 +34,38 @@ export interface TestCase {
   assertions: VisualAssertion[];
   selfHealed?: boolean;
   failedStepSummary?: string;
+  output?: TestOutput;
+}
+
+export interface ProjectLinks {
+  prd?: string;
+  figma?: string;
+}
+
+export interface TestOutput {
+  pdfUrl?: string;
+  videoUrl?: string;
+}
+
+export interface ScheduledRun {
+  nextRun: Date;
+  frequency: 'daily' | 'weekly' | 'monthly' | 'manual';
+  enabled: boolean;
 }
 
 export interface Project {
   id: string;
   name: string;
   description: string;
+  summary: string;
   quarter: string;
   testCases: TestCase[];
   members: ProjectMember[];
   createdAt: Date;
   lastUpdated: Date;
   status: 'active' | 'completed' | 'paused';
+  links?: ProjectLinks;
+  scheduledRun?: ScheduledRun;
 }
 
 export interface VisualAssertion {

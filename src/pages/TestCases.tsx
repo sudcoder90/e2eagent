@@ -5,9 +5,10 @@ import { CreateTestModal } from '@/components/tests/CreateTestModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { mockTestCases } from '@/data/mockData';
-import { Plus, Search, Filter, Play } from 'lucide-react';
+import { mockProjects } from '@/data/mockProjects';
+import { Plus, Search, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { TestCase } from '@/types';
 
 export default function TestCases() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -15,15 +16,18 @@ export default function TestCases() {
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const { toast } = useToast();
 
+  // Aggregate all test cases from all projects
+  const allTestCases: TestCase[] = mockProjects.flatMap(project => project.testCases);
+
   const filters = [
-    { label: 'All', value: null, count: mockTestCases.length },
-    { label: 'Passed', value: 'passed', count: mockTestCases.filter(t => t.status === 'passed').length },
-    { label: 'Failed', value: 'failed', count: mockTestCases.filter(t => t.status === 'failed').length },
-    { label: 'Running', value: 'running', count: mockTestCases.filter(t => t.status === 'running').length },
-    { label: 'Pending', value: 'pending', count: mockTestCases.filter(t => t.status === 'pending').length },
+    { label: 'All', value: null, count: allTestCases.length },
+    { label: 'Passed', value: 'passed', count: allTestCases.filter(t => t.status === 'passed').length },
+    { label: 'Failed', value: 'failed', count: allTestCases.filter(t => t.status === 'failed').length },
+    { label: 'Running', value: 'running', count: allTestCases.filter(t => t.status === 'running').length },
+    { label: 'Pending', value: 'pending', count: allTestCases.filter(t => t.status === 'pending').length },
   ];
 
-  const filteredTests = mockTestCases.filter(test => {
+  const filteredTests = allTestCases.filter(test => {
     const matchesSearch = test.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           test.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter = selectedFilter === null || test.status === selectedFilter;

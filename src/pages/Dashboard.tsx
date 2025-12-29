@@ -2,15 +2,14 @@ import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { ProjectCard } from '@/components/projects/ProjectCard';
+import { ScheduledTestsPanel } from '@/components/dashboard/ScheduledTestsPanel';
 import { mockProjects, getProjectStats } from '@/data/mockProjects';
-import { mockAgents } from '@/data/mockData';
-import { AgentStatusPanel } from '@/components/dashboard/AgentStatusPanel';
 import { 
   Folder,
   TestTube2, 
   CheckCircle2, 
   XCircle, 
-  Bot,
+  Calendar,
 } from 'lucide-react';
 
 export default function Dashboard() {
@@ -26,6 +25,8 @@ export default function Dashboard() {
       pendingTests: acc.pendingTests + stats.pendingTests + stats.runningTests,
     };
   }, { totalTests: 0, passedTests: 0, failedTests: 0, pendingTests: 0 });
+
+  const scheduledCount = mockProjects.filter(p => p.scheduledRun?.enabled).length;
 
   return (
     <div className="min-h-screen">
@@ -65,10 +66,10 @@ export default function Dashboard() {
             variant="destructive"
           />
           <StatsCard
-            title="Active Agents"
-            value={mockAgents.filter(a => a.status === 'running').length}
-            subtitle={`${mockAgents.length} total deployed`}
-            icon={<Bot className="w-6 h-6" />}
+            title="Scheduled"
+            value={scheduledCount}
+            subtitle={`${mockProjects.length - scheduledCount} manual`}
+            icon={<Calendar className="w-6 h-6" />}
           />
         </div>
 
@@ -93,8 +94,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Agent Status */}
-        <AgentStatusPanel agents={mockAgents} />
+        {/* Scheduled Tests */}
+        <ScheduledTestsPanel />
       </div>
     </div>
   );
