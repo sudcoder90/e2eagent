@@ -1,92 +1,100 @@
+import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { StatsCard } from '@/components/dashboard/StatsCard';
-import { TestStatusChart } from '@/components/dashboard/TestStatusChart';
+import { ProjectCard } from '@/components/projects/ProjectCard';
+import { mockProjects, getProjectStats } from '@/data/mockProjects';
+import { mockAgents } from '@/data/mockData';
 import { AgentStatusPanel } from '@/components/dashboard/AgentStatusPanel';
-import { RecentTestRuns } from '@/components/dashboard/RecentTestRuns';
-import { mockDashboardStats, mockAgents, mockTestRuns } from '@/data/mockData';
 import { 
+  Folder,
   TestTube2, 
   CheckCircle2, 
   XCircle, 
-  Bot, 
-  AlertTriangle, 
-  Sparkles,
-  Timer
+  Bot,
 } from 'lucide-react';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
+  // Aggregate stats from all projects
+  const aggregateStats = mockProjects.reduce((acc, project) => {
+    const stats = getProjectStats(project);
+    return {
+      totalTests: acc.totalTests + stats.totalTests,
+      passedTests: acc.passedTests + stats.passedTests,
+      failedTests: acc.failedTests + stats.failedTests,
+      pendingTests: acc.pendingTests + stats.pendingTests + stats.runningTests,
+    };
+  }, { totalTests: 0, passedTests: 0, failedTests: 0, pendingTests: 0 });
+
   return (
     <div className="min-h-screen">
       <Header 
         title="Dashboard" 
-        subtitle="Monitor your automated QA testing pipeline"
+        subtitle="Monitor your QA testing projects and test execution"
       />
       
       <div className="p-6 space-y-6">
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Overview Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <StatsCard
-            title="Total Tests"
-            value={mockDashboardStats.totalTests}
-            subtitle="Test cases configured"
-            icon={<TestTube2 className="w-6 h-6" />}
+            title="Total Projects"
+            value={mockProjects.length}
+            subtitle="Active projects"
+            icon={<Folder className="w-6 h-6" />}
             variant="primary"
           />
           <StatsCard
+            title="Total Tests"
+            value={aggregateStats.totalTests}
+            subtitle="Across all projects"
+            icon={<TestTube2 className="w-6 h-6" />}
+          />
+          <StatsCard
             title="Passed Tests"
-            value={mockDashboardStats.passedTests}
-            subtitle={`${((mockDashboardStats.passedTests / mockDashboardStats.totalTests) * 100).toFixed(1)}% success rate`}
+            value={aggregateStats.passedTests}
+            subtitle={`${((aggregateStats.passedTests / aggregateStats.totalTests) * 100).toFixed(1)}% success rate`}
             icon={<CheckCircle2 className="w-6 h-6" />}
             variant="success"
-            trend={{ value: 5.2, positive: true }}
           />
           <StatsCard
             title="Failed Tests"
-            value={mockDashboardStats.failedTests}
+            value={aggregateStats.failedTests}
             subtitle="Requires attention"
             icon={<XCircle className="w-6 h-6" />}
             variant="destructive"
           />
           <StatsCard
             title="Active Agents"
-            value={mockDashboardStats.activeAgents}
-            subtitle="Synthetic users deployed"
+            value={mockAgents.filter(a => a.status === 'running').length}
+            subtitle={`${mockAgents.length} total deployed`}
             icon={<Bot className="w-6 h-6" />}
           />
         </div>
 
-        {/* Secondary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <StatsCard
-            title="UI Drifts Detected"
-            value={mockDashboardStats.uiDriftsDetected}
-            subtitle="This week"
-            icon={<AlertTriangle className="w-6 h-6" />}
-            variant="warning"
-          />
-          <StatsCard
-            title="Self-Healed Tests"
-            value={mockDashboardStats.selfHealedTests}
-            subtitle="Auto-corrected selectors"
-            icon={<Sparkles className="w-6 h-6" />}
-            variant="success"
-          />
-          <StatsCard
-            title="Avg Run Time"
-            value={`${mockDashboardStats.averageRunTime}s`}
-            subtitle="Per test execution"
-            icon={<Timer className="w-6 h-6" />}
-          />
+        {/* Projects Section */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-semibold text-foreground">Projects</h2>
+              <p className="text-sm text-muted-foreground">
+                Click on a project to view test cases and details
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {mockProjects.map((project) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                onClick={() => navigate(`/project/${project.id}`)}
+              />
+            ))}
+          </div>
         </div>
 
-        {/* Charts and Panels */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <TestStatusChart stats={mockDashboardStats} />
-          <AgentStatusPanel agents={mockAgents} />
-        </div>
-
-        {/* Recent Runs */}
-        <RecentTestRuns runs={mockTestRuns} />
+        {/* Agent Status */}
+        <AgentStatusPanel agents={mockAgents} />
       </div>
     </div>
   );
