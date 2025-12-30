@@ -9,6 +9,7 @@ import ProjectDetail from "./pages/ProjectDetail";
 import Scheduling from "./pages/Scheduling";
 import Evaluations from "./pages/Evaluations";
 import UIDrifts from "./pages/UIDrifts";
+import AgentMemory from "./pages/AgentMemory";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/project/:projectId" element={<ProjectDetail />} />
             <Route path="/scheduling" element={<Scheduling />} />
             <Route path="/evaluations" element={<Evaluations />} />
+            <Route path="/memory" element={<AgentMemory />} />
             <Route path="/drifts" element={<UIDrifts />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

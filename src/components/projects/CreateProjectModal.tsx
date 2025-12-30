@@ -1,0 +1,399 @@
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { 
+  Plus, 
+  Link, 
+  Upload, 
+  FileText, 
+  Figma, 
+  Ticket,
+  Calendar,
+  Play,
+  Trash2,
+  ExternalLink
+} from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+interface CreateProjectModalProps {
+  trigger?: React.ReactNode;
+}
+
+interface TestCaseInput {
+  id: string;
+  name: string;
+  description: string;
+}
+
+export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
+  const [open, setOpen] = useState(false);
+  const [projectName, setProjectName] = useState('');
+  const [projectSummary, setProjectSummary] = useState('');
+  const [quarter, setQuarter] = useState('');
+  const [prdLink, setPrdLink] = useState('');
+  const [figmaLink, setFigmaLink] = useState('');
+  const [opifTicket, setOpifTicket] = useState('');
+  const [confluenceLink, setConfluenceLink] = useState('');
+  const [testCases, setTestCases] = useState<TestCaseInput[]>([]);
+  const [scheduleFrequency, setScheduleFrequency] = useState<string>('manual');
+  const [scheduleDate, setScheduleDate] = useState('');
+  const { toast } = useToast();
+
+  const addTestCase = () => {
+    setTestCases([
+      ...testCases,
+      { id: `tc-${Date.now()}`, name: '', description: '' }
+    ]);
+  };
+
+  const removeTestCase = (id: string) => {
+    setTestCases(testCases.filter(tc => tc.id !== id));
+  };
+
+  const updateTestCase = (id: string, field: 'name' | 'description', value: string) => {
+    setTestCases(testCases.map(tc => 
+      tc.id === id ? { ...tc, [field]: value } : tc
+    ));
+  };
+
+  const handleCreate = () => {
+    if (!projectName.trim()) {
+      toast({
+        title: "Project name required",
+        description: "Please enter a name for your project",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    toast({
+      title: "Project Created",
+      description: `"${projectName}" has been created successfully with ${testCases.length} test cases`,
+    });
+    setOpen(false);
+    resetForm();
+  };
+
+  const handleRunNow = () => {
+    if (!projectName.trim()) {
+      toast({
+        title: "Project name required",
+        description: "Please enter a name for your project before running tests",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    toast({
+      title: "Tests Started",
+      description: `Running ${testCases.length} test cases for "${projectName}"...`,
+    });
+  };
+
+  const resetForm = () => {
+    setProjectName('');
+    setProjectSummary('');
+    setQuarter('');
+    setPrdLink('');
+    setFigmaLink('');
+    setOpifTicket('');
+    setConfluenceLink('');
+    setTestCases([]);
+    setScheduleFrequency('manual');
+    setScheduleDate('');
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        {trigger || (
+          <Button className="gap-2">
+            <Plus className="w-4 h-4" />
+            New Project
+          </Button>
+        )}
+      </DialogTrigger>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-xl">Create New Project</DialogTitle>
+        </DialogHeader>
+        
+        <div className="space-y-6 py-4">
+          {/* Basic Info */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="projectName">Project Name *</Label>
+                <Input
+                  id="projectName"
+                  placeholder="e.g., Cart Page Enhancement Q1 2026"
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="quarter">Quarter</Label>
+                <Select value={quarter} onValueChange={setQuarter}>
+                  <SelectTrigger id="quarter">
+                    <SelectValue placeholder="Select quarter" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Q1 2025">Q1 2025</SelectItem>
+                    <SelectItem value="Q2 2025">Q2 2025</SelectItem>
+                    <SelectItem value="Q3 2025">Q3 2025</SelectItem>
+                    <SelectItem value="Q4 2025">Q4 2025</SelectItem>
+                    <SelectItem value="Q1 2026">Q1 2026</SelectItem>
+                    <SelectItem value="Q2 2026">Q2 2026</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="summary">Project Summary</Label>
+              <Textarea
+                id="summary"
+                placeholder="Describe the project scope and goals..."
+                value={projectSummary}
+                onChange={(e) => setProjectSummary(e.target.value)}
+                rows={3}
+              />
+            </div>
+          </div>
+
+          {/* Links Section */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <Link className="w-4 h-4" />
+              Project Links
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="prd" className="flex items-center gap-2">
+                  <FileText className="w-3 h-3" />
+                  PRD Link
+                </Label>
+                <Input
+                  id="prd"
+                  placeholder="https://docs.google.com/..."
+                  value={prdLink}
+                  onChange={(e) => setPrdLink(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="figma" className="flex items-center gap-2">
+                  <Figma className="w-3 h-3" />
+                  Figma Link
+                </Label>
+                <Input
+                  id="figma"
+                  placeholder="https://figma.com/..."
+                  value={figmaLink}
+                  onChange={(e) => setFigmaLink(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="opif" className="flex items-center gap-2">
+                  <Ticket className="w-3 h-3" />
+                  OPIF Ticket
+                </Label>
+                <Input
+                  id="opif"
+                  placeholder="OPIF-12345"
+                  value={opifTicket}
+                  onChange={(e) => setOpifTicket(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confluence" className="flex items-center gap-2">
+                  <ExternalLink className="w-3 h-3" />
+                  Confluence Page
+                </Label>
+                <Input
+                  id="confluence"
+                  placeholder="https://confluence.amazon.com/..."
+                  value={confluenceLink}
+                  onChange={(e) => setConfluenceLink(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Test Cases Section */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-foreground">Test Cases</h3>
+              <Badge variant="secondary">{testCases.length} test cases</Badge>
+            </div>
+
+            <Tabs defaultValue="manual" className="w-full">
+              <TabsList className="w-full grid grid-cols-3">
+                <TabsTrigger value="manual">Add Manually</TabsTrigger>
+                <TabsTrigger value="confluence">Import from Confluence</TabsTrigger>
+                <TabsTrigger value="upload">Upload Document</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="manual" className="space-y-3 mt-4">
+                {testCases.map((tc, index) => (
+                  <Card key={tc.id} className="bg-muted/30 border-border/50">
+                    <CardContent className="p-3">
+                      <div className="flex items-start gap-3">
+                        <span className="text-xs font-mono text-muted-foreground mt-2">
+                          {index + 1}
+                        </span>
+                        <div className="flex-1 space-y-2">
+                          <Input
+                            placeholder="Test case name"
+                            value={tc.name}
+                            onChange={(e) => updateTestCase(tc.id, 'name', e.target.value)}
+                            className="h-8"
+                          />
+                          <Textarea
+                            placeholder="Describe the test steps in plain English..."
+                            value={tc.description}
+                            onChange={(e) => updateTestCase(tc.id, 'description', e.target.value)}
+                            rows={2}
+                            className="resize-none"
+                          />
+                        </div>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8 text-destructive hover:text-destructive"
+                          onClick={() => removeTestCase(tc.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                <Button
+                  variant="outline"
+                  className="w-full gap-2 border-dashed"
+                  onClick={addTestCase}
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Test Case
+                </Button>
+              </TabsContent>
+
+              <TabsContent value="confluence" className="mt-4">
+                <Card className="bg-muted/30 border-border/50 border-dashed">
+                  <CardContent className="p-6 text-center">
+                    <ExternalLink className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Paste your Confluence page URL to import test cases
+                    </p>
+                    <Input
+                      placeholder="https://confluence.amazon.com/display/..."
+                      value={confluenceLink}
+                      onChange={(e) => setConfluenceLink(e.target.value)}
+                    />
+                    <Button variant="outline" className="mt-3 gap-2">
+                      <Link className="w-4 h-4" />
+                      Import Test Cases
+                    </Button>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="upload" className="mt-4">
+                <Card className="bg-muted/30 border-border/50 border-dashed">
+                  <CardContent className="p-6 text-center">
+                    <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Upload a document containing your test cases
+                    </p>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      Supported formats: .doc, .docx, .pdf, .txt, .md
+                    </p>
+                    <Button variant="outline" className="gap-2">
+                      <Upload className="w-4 h-4" />
+                      Choose File
+                    </Button>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          {/* Scheduling Section */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              Test Schedule
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="frequency">Run Frequency</Label>
+                <Select value={scheduleFrequency} onValueChange={setScheduleFrequency}>
+                  <SelectTrigger id="frequency">
+                    <SelectValue placeholder="Select frequency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="manual">Manual Only</SelectItem>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {scheduleFrequency !== 'manual' && (
+                <div className="space-y-2">
+                  <Label htmlFor="startDate">Start Date</Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={scheduleDate}
+                    onChange={(e) => setScheduleDate(e.target.value)}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center justify-between pt-4 border-t border-border">
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                className="gap-2"
+                onClick={handleRunNow}
+                disabled={testCases.length === 0}
+              >
+                <Play className="w-4 h-4" />
+                Create & Run Now
+              </Button>
+              <Button onClick={handleCreate} className="gap-2">
+                <Plus className="w-4 h-4" />
+                Create Project
+              </Button>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

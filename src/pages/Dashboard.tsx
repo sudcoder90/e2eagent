@@ -3,6 +3,7 @@ import { Header } from '@/components/layout/Header';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { ProjectCard } from '@/components/projects/ProjectCard';
 import { ScheduledTestsPanel } from '@/components/dashboard/ScheduledTestsPanel';
+import { CreateProjectModal } from '@/components/projects/CreateProjectModal';
 import { mockProjects, getProjectStats } from '@/data/mockProjects';
 import { 
   Folder,
@@ -10,7 +11,9 @@ import {
   CheckCircle2, 
   XCircle, 
   Calendar,
+  Plus,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -82,6 +85,14 @@ export default function Dashboard() {
                 Click on a project to view test cases and details
               </p>
             </div>
+            <CreateProjectModal 
+              trigger={
+                <Button className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  New Project
+                </Button>
+              }
+            />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {mockProjects.map((project) => (
