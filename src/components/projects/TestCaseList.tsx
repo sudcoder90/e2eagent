@@ -17,7 +17,9 @@ import {
   ChevronRight,
   Play,
   AlertTriangle,
-  Sparkles
+  Sparkles,
+  FileDown,
+  Video
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -128,18 +130,48 @@ function TestCaseItem({ testCase }: { testCase: TestCase }) {
                   )}
                 </div>
               </div>
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="gap-2 flex-shrink-0"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Run test logic here
-                }}
-              >
-                <Play className="w-3 h-3" />
-                Run
-              </Button>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {testCase.output?.pdfUrl && (
+                  <Button 
+                    size="sm" 
+                    variant="ghost" 
+                    className="gap-1 h-8 px-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(testCase.output?.pdfUrl, '_blank');
+                    }}
+                  >
+                    <FileDown className="w-3 h-3" />
+                    <span className="text-xs">PDF</span>
+                  </Button>
+                )}
+                {testCase.output?.videoUrl && (
+                  <Button 
+                    size="sm" 
+                    variant="ghost" 
+                    className="gap-1 h-8 px-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(testCase.output?.videoUrl, '_blank');
+                    }}
+                  >
+                    <Video className="w-3 h-3" />
+                    <span className="text-xs">Video</span>
+                  </Button>
+                )}
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="gap-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Run test logic here
+                  }}
+                >
+                  <Play className="w-3 h-3" />
+                  Run
+                </Button>
+              </div>
             </div>
           </CardContent>
         </CollapsibleTrigger>
