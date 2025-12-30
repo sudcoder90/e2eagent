@@ -19,6 +19,20 @@ const createSteps = (stepDescriptions: string[], failedStep?: number, failureRea
   }));
 };
 
+// Helper to add output to test cases that have been run
+const addOutputToTestCase = (tc: TestCase): TestCase => {
+  if (tc.lastRun) {
+    return {
+      ...tc,
+      output: {
+        pdfUrl: `/reports/${tc.id}.pdf`,
+        videoUrl: `/recordings/${tc.id}.mp4`,
+      },
+    };
+  }
+  return tc;
+};
+
 const cartPageTestCases: TestCase[] = [
   {
     id: 'tc-cart-1',
@@ -38,6 +52,10 @@ const cartPageTestCases: TestCase[] = [
     lastRun: new Date(Date.now() - 3600000),
     duration: 42.3,
     assertions: [],
+    output: {
+      pdfUrl: '/reports/tc-cart-1.pdf',
+      videoUrl: '/recordings/tc-cart-1.mp4',
+    },
   },
   {
     id: 'tc-cart-2',
@@ -58,6 +76,10 @@ const cartPageTestCases: TestCase[] = [
     lastRun: new Date(Date.now() - 7200000),
     duration: 58.7,
     assertions: [],
+    output: {
+      pdfUrl: '/reports/tc-cart-2.pdf',
+      videoUrl: '/recordings/tc-cart-2.mp4',
+    },
   },
   {
     id: 'tc-cart-3',
@@ -75,6 +97,10 @@ const cartPageTestCases: TestCase[] = [
     status: 'failed',
     lastRun: new Date(Date.now() - 1800000),
     duration: 35.2,
+    output: {
+      pdfUrl: '/reports/tc-cart-3.pdf',
+      videoUrl: '/recordings/tc-cart-3.mp4',
+    },
     assertions: [],
     failedStepSummary: 'Step 5 failed: Timeout waiting for price recalculation after quantity update',
   },
@@ -630,7 +656,7 @@ export const mockProjects: Project[] = [
     description: 'Q1 2026 cart page enhancements including improved UX for quantity updates, promo codes, and save for later functionality',
     summary: 'This project focuses on enhancing the cart experience by improving quantity update flows, implementing robust promo code functionality, adding a "Save for Later" feature, and ensuring cart persistence across sessions. The goal is to reduce cart abandonment by 15% and improve conversion rates.',
     quarter: 'Q1 2026',
-    testCases: cartPageTestCases,
+    testCases: cartPageTestCases.map(addOutputToTestCase),
     members: createMembers(),
     createdAt: new Date('2025-10-15'),
     lastUpdated: new Date(Date.now() - 3600000),
@@ -651,7 +677,7 @@ export const mockProjects: Project[] = [
     description: 'Q2 2026 improvements to customer onboarding including social login, accessibility, and mobile optimization',
     summary: 'Comprehensive overhaul of the signup flow to improve conversion rates and accessibility. Key features include Google and Apple OAuth integration, WCAG 2.1 AA compliance, mobile-first responsive design, and streamlined email verification. Target: 25% improvement in signup completion rates.',
     quarter: 'Q2 2026',
-    testCases: signupFlowTestCases,
+    testCases: signupFlowTestCases.map(addOutputToTestCase),
     members: [
       { id: 'm1', name: 'Sarah Chen', email: 'sarah.chen@amazon.com', role: 'owner' },
       { id: 'm6', name: 'Alex Martinez', email: 'alex.m@amazon.com', role: 'edit' },
@@ -676,7 +702,7 @@ export const mockProjects: Project[] = [
     description: 'Homepage splash page improvements including performance optimization, pricing toggle, and responsive design',
     summary: 'Performance-focused redesign of the homepage splash page. Key objectives include achieving LCP under 2.5s, implementing a monthly/annual pricing toggle with smooth animations, adding hero carousel functionality, and ensuring seamless responsive behavior across all device sizes.',
     quarter: 'Q1 2026',
-    testCases: splashPageTestCases,
+    testCases: splashPageTestCases.map(addOutputToTestCase),
     members: [
       { id: 'm1', name: 'Sarah Chen', email: 'sarah.chen@amazon.com', role: 'edit' },
       { id: 'm8', name: 'Jordan Lee', email: 'jordan.l@amazon.com', role: 'owner' },

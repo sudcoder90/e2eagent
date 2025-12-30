@@ -3,7 +3,8 @@ import { Header } from '@/components/layout/Header';
 import { TestCaseList } from '@/components/projects/TestCaseList';
 import { AccessControlPanel } from '@/components/projects/AccessControlPanel';
 import { StatsCard } from '@/components/dashboard/StatsCard';
-import { mockProjects, getProjectStats } from '@/data/mockProjects';
+import { getProjectStats } from '@/data/mockProjects';
+import { useProjects } from '@/context/ProjectsContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -24,8 +25,9 @@ import {
 export default function ProjectDetail() {
   const { projectId } = useParams();
   const navigate = useNavigate();
+  const { projects } = useProjects();
   
-  const project = mockProjects.find(p => p.id === projectId);
+  const project = projects.find(p => p.id === projectId);
   
   if (!project) {
     return (

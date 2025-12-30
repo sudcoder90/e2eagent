@@ -4,7 +4,8 @@ import { StatsCard } from '@/components/dashboard/StatsCard';
 import { ProjectCard } from '@/components/projects/ProjectCard';
 import { ScheduledTestsPanel } from '@/components/dashboard/ScheduledTestsPanel';
 import { CreateProjectModal } from '@/components/projects/CreateProjectModal';
-import { mockProjects, getProjectStats } from '@/data/mockProjects';
+import { useProjects } from '@/context/ProjectsContext';
+import { getProjectStats } from '@/data/mockProjects';
 import { 
   Folder,
   TestTube2, 
@@ -17,9 +18,10 @@ import { Button } from '@/components/ui/button';
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { projects } = useProjects();
 
   // Aggregate stats from all projects
-  const aggregateStats = mockProjects.reduce((acc, project) => {
+  const aggregateStats = projects.reduce((acc, project) => {
     const stats = getProjectStats(project);
     return {
       totalTests: acc.totalTests + stats.totalTests,
@@ -29,7 +31,7 @@ export default function Dashboard() {
     };
   }, { totalTests: 0, passedTests: 0, failedTests: 0, pendingTests: 0 });
 
-  const scheduledCount = mockProjects.filter(p => p.scheduledRun?.enabled).length;
+  const scheduledCount = projects.filter(p => p.scheduledRun?.enabled).length;
 
   return (
     <div className="min-h-screen">
@@ -43,7 +45,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <StatsCard
             title="Total Projects"
-            value={mockProjects.length}
+            value={projects.length}
             subtitle="Active projects"
             icon={<Folder className="w-6 h-6" />}
             variant="primary"
@@ -57,7 +59,7 @@ export default function Dashboard() {
           <StatsCard
             title="Passed Tests"
             value={aggregateStats.passedTests}
-            subtitle={`${((aggregateStats.passedTests / aggregateStats.totalTests) * 100).toFixed(1)}% success rate`}
+            subtitle={`${aggregateStats.totalTests > 0 ? ((aggregateStats.passedTests / aggregateStats.totalTests) * 100).toFixed(1) : 0}% success rate`}
             icon={<CheckCircle2 className="w-6 h-6" />}
             variant="success"
           />
@@ -71,7 +73,7 @@ export default function Dashboard() {
           <StatsCard
             title="Scheduled"
             value={scheduledCount}
-            subtitle={`${mockProjects.length - scheduledCount} manual`}
+            subtitle={`${projects.length - scheduledCount} manual`}
             icon={<Calendar className="w-6 h-6" />}
           />
         </div>
@@ -95,7 +97,7 @@ export default function Dashboard() {
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {mockProjects.map((project) => (
+            {projects.map((project) => (
               <ProjectCard
                 key={project.id}
                 project={project}
