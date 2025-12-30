@@ -33,6 +33,8 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useProjects } from '@/context/ProjectsContext';
+import { Project, TestCase } from '@/types';
 
 interface CreateProjectModalProps {
   trigger?: React.ReactNode;
@@ -57,6 +59,7 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
   const [scheduleFrequency, setScheduleFrequency] = useState<string>('manual');
   const [scheduleDate, setScheduleDate] = useState('');
   const { toast } = useToast();
+  const { addProject } = useProjects();
 
   const addTestCase = () => {
     setTestCases([
@@ -75,6 +78,41 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
     ));
   };
 
+  const createProjectObject = (): Project => {
+    const projectTestCases: TestCase[] = testCases.map((tc, index) => ({
+      id: `${projectName.toLowerCase().replace(/\s+/g, '-')}-tc-${index + 1}`,
+      name: tc.name || `Test Case ${index + 1}`,
+      description: tc.description || 'No description provided',
+      steps: [],
+      status: 'pending' as const,
+      assertions: [],
+    }));
+
+    return {
+      id: `proj-${Date.now()}`,
+      name: projectName,
+      description: projectSummary || 'No description provided',
+      summary: projectSummary || 'No summary provided',
+      quarter: quarter || 'Q1 2026',
+      testCases: projectTestCases,
+      members: [
+        { id: 'm-creator', name: 'You', email: 'you@amazon.com', role: 'owner' as const }
+      ],
+      createdAt: new Date(),
+      lastUpdated: new Date(),
+      status: 'active' as const,
+      links: {
+        prd: prdLink || undefined,
+        figma: figmaLink || undefined,
+      },
+      scheduledRun: scheduleFrequency !== 'manual' ? {
+        nextRun: scheduleDate ? new Date(scheduleDate) : new Date(Date.now() + 86400000),
+        frequency: scheduleFrequency as 'daily' | 'weekly' | 'monthly',
+        enabled: true,
+      } : undefined,
+    };
+  };
+
   const handleCreate = () => {
     if (!projectName.trim()) {
       toast({
@@ -84,6 +122,9 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
       });
       return;
     }
+
+    const newProject = createProjectObject();
+    addProject(newProject);
 
     toast({
       title: "Project Created",
@@ -103,10 +144,15 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
       return;
     }
 
+    const newProject = createProjectObject();
+    addProject(newProject);
+
     toast({
       title: "Tests Started",
       description: `Running ${testCases.length} test cases for "${projectName}"...`,
     });
+    setOpen(false);
+    resetForm();
   };
 
   const resetForm = () => {
