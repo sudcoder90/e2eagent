@@ -50,7 +50,12 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
               <CardTitle className="text-lg group-hover:text-primary transition-colors">
                 {project.name}
               </CardTitle>
-              <p className="text-sm text-muted-foreground">{project.quarter}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <Badge variant="outline" className="text-xs font-medium">
+                  {project.team} Team
+                </Badge>
+                <span className="text-sm text-muted-foreground">{project.quarter}</span>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
