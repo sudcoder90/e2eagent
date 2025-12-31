@@ -59,6 +59,7 @@ export interface Project {
   description: string;
   summary: string;
   quarter: string;
+  team: string;
   testCases: TestCase[];
   members: ProjectMember[];
   createdAt: Date;

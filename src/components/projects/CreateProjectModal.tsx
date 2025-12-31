@@ -51,6 +51,7 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
   const [projectName, setProjectName] = useState('');
   const [projectSummary, setProjectSummary] = useState('');
   const [quarter, setQuarter] = useState('');
+  const [team, setTeam] = useState('');
   const [prdLink, setPrdLink] = useState('');
   const [figmaLink, setFigmaLink] = useState('');
   const [opifTicket, setOpifTicket] = useState('');
@@ -94,6 +95,7 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
       description: projectSummary || 'No description provided',
       summary: projectSummary || 'No summary provided',
       quarter: quarter || 'Q1 2026',
+      team: team || 'General',
       testCases: projectTestCases,
       members: [
         { id: 'm-creator', name: 'You', email: 'you@amazon.com', role: 'owner' as const }
@@ -159,6 +161,7 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
     setProjectName('');
     setProjectSummary('');
     setQuarter('');
+    setTeam('');
     setPrdLink('');
     setFigmaLink('');
     setOpifTicket('');
@@ -186,14 +189,23 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
         <div className="space-y-6 py-4">
           {/* Basic Info */}
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="projectName">Project Name *</Label>
                 <Input
                   id="projectName"
-                  placeholder="e.g., Cart Page Enhancement Q1 2026"
+                  placeholder="e.g., Cart Page Enhancement"
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="team">Team *</Label>
+                <Input
+                  id="team"
+                  placeholder="e.g., Cart, CXO, Walmart+"
+                  value={team}
+                  onChange={(e) => setTeam(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
