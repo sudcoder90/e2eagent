@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
 import { Header } from '@/components/layout/Header';
 import { TestCaseList } from '@/components/projects/TestCaseList';
 import { AccessControlPanel } from '@/components/projects/AccessControlPanel';
@@ -63,7 +64,7 @@ export default function ProjectDetail() {
             Back to Projects
           </Button>
           <div className="flex items-center gap-3">
-            <Badge variant="outline" className="text-sm">{project.quarter}</Badge>
+            <Badge variant="outline" className="text-sm">{format(new Date(), 'MMM d, yyyy')}</Badge>
             <Button variant="glow" className="gap-2">
               <Play className="w-4 h-4" />
               Run All Tests

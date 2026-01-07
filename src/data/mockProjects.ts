@@ -1,11 +1,11 @@
 import { Project, TestCase, TestStep, ProjectMember } from '@/types';
 
 const createMembers = (): ProjectMember[] => [
-  { id: 'm1', name: 'Sarah Chen', email: 'sarah.chen@amazon.com', role: 'owner' },
-  { id: 'm2', name: 'Marcus Johnson', email: 'marcus.j@amazon.com', role: 'edit' },
-  { id: 'm3', name: 'Emily Rodriguez', email: 'emily.r@amazon.com', role: 'edit' },
-  { id: 'm4', name: 'David Kim', email: 'david.kim@amazon.com', role: 'view' },
-  { id: 'm5', name: 'Lisa Thompson', email: 'lisa.t@amazon.com', role: 'view' },
+  { id: 'm1', name: 'Sarah Chen', email: 'sarah.chen@walmart.com', role: 'owner' },
+  { id: 'm2', name: 'Marcus Johnson', email: 'marcus.j@walmart.com', role: 'edit' },
+  { id: 'm3', name: 'Emily Rodriguez', email: 'emily.r@walmart.com', role: 'edit' },
+  { id: 'm4', name: 'David Kim', email: 'david.kim@walmart.com', role: 'view' },
+  { id: 'm5', name: 'Lisa Thompson', email: 'lisa.t@walmart.com', role: 'view' },
 ];
 
 const createSteps = (stepDescriptions: string[], failedStep?: number, failureReason?: string): TestStep[] => {

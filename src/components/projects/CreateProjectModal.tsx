@@ -91,7 +91,7 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
   const projectOwner: ContributorInput = {
     id: 'm-owner',
     name: 'You (Project Owner)',
-    email: 'you@company.com',
+    email: 'you@walmart.com',
     role: 'owner'
   };
 
