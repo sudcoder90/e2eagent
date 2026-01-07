@@ -30,11 +30,17 @@ import {
   Calendar,
   Play,
   Trash2,
-  ExternalLink
+  ExternalLink,
+  Users,
+  Crown,
+  Pencil,
+  Eye,
+  X
 } from 'lucide-react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { useProjects } from '@/context/ProjectsContext';
-import { Project, TestCase } from '@/types';
+import { Project, TestCase, ProjectMember, AccessRole } from '@/types';
 
 interface CreateProjectModalProps {
   trigger?: React.ReactNode;
@@ -44,6 +50,13 @@ interface TestCaseInput {
   id: string;
   name: string;
   description: string;
+}
+
+interface ContributorInput {
+  id: string;
+  name: string;
+  email: string;
+  role: AccessRole;
 }
 
 export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
@@ -59,8 +72,57 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
   const [testCases, setTestCases] = useState<TestCaseInput[]>([]);
   const [scheduleFrequency, setScheduleFrequency] = useState<string>('manual');
   const [scheduleDate, setScheduleDate] = useState('');
+  const [contributors, setContributors] = useState<ContributorInput[]>([]);
+  const [newContributorName, setNewContributorName] = useState('');
+  const [newContributorEmail, setNewContributorEmail] = useState('');
+  const [newContributorRole, setNewContributorRole] = useState<AccessRole>('edit');
   const { toast } = useToast();
   const { addProject } = useProjects();
+
+  const projectOwner: ContributorInput = {
+    id: 'm-owner',
+    name: 'You (Project Owner)',
+    email: 'you@company.com',
+    role: 'owner'
+  };
+
+  const addContributor = () => {
+    if (!newContributorName.trim() || !newContributorEmail.trim()) {
+      toast({
+        title: "Missing information",
+        description: "Please enter both name and email for the contributor",
+        variant: "destructive"
+      });
+      return;
+    }
+    setContributors([
+      ...contributors,
+      {
+        id: `contrib-${Date.now()}`,
+        name: newContributorName,
+        email: newContributorEmail,
+        role: newContributorRole
+      }
+    ]);
+    setNewContributorName('');
+    setNewContributorEmail('');
+    setNewContributorRole('edit');
+  };
+
+  const removeContributor = (id: string) => {
+    setContributors(contributors.filter(c => c.id !== id));
+  };
+
+  const getRoleIcon = (role: AccessRole) => {
+    switch (role) {
+      case 'owner':
+        return <Crown className="w-3 h-3 text-warning" />;
+      case 'edit':
+        return <Pencil className="w-3 h-3 text-primary" />;
+      case 'view':
+        return <Eye className="w-3 h-3 text-muted-foreground" />;
+    }
+  };
 
   const addTestCase = () => {
     setTestCases([
@@ -98,7 +160,13 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
       team: team || 'General',
       testCases: projectTestCases,
       members: [
-        { id: 'm-creator', name: 'You', email: 'you@amazon.com', role: 'owner' as const }
+        { id: projectOwner.id, name: 'You', email: projectOwner.email, role: 'owner' as const },
+        ...contributors.map(c => ({
+          id: c.id,
+          name: c.name,
+          email: c.email,
+          role: c.role
+        }))
       ],
       createdAt: new Date(),
       lastUpdated: new Date(),
@@ -169,6 +237,10 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
     setTestCases([]);
     setScheduleFrequency('manual');
     setScheduleDate('');
+    setContributors([]);
+    setNewContributorName('');
+    setNewContributorEmail('');
+    setNewContributorRole('edit');
   };
 
   return (
@@ -427,6 +499,115 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Contributors Section */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                Contributors
+              </h3>
+              <Badge variant="secondary">{contributors.length + 1} members</Badge>
+            </div>
+
+            {/* Project Owner (always shown) */}
+            <Card className="bg-primary/5 border-primary/20">
+              <CardContent className="p-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="w-8 h-8">
+                      <AvatarFallback className="text-xs bg-warning/20 text-warning">
+                        YO
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm font-medium text-foreground flex items-center gap-2">
+                        You
+                        <Crown className="w-3 h-3 text-warning" />
+                      </p>
+                      <p className="text-xs text-muted-foreground">{projectOwner.email}</p>
+                    </div>
+                  </div>
+                  <Badge variant="warning" className="text-xs">Owner</Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Added Contributors */}
+            {contributors.map((contributor) => (
+              <Card key={contributor.id} className="bg-muted/30 border-border/50">
+                <CardContent className="p-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="w-8 h-8">
+                        <AvatarFallback className="text-xs bg-primary/20 text-primary">
+                          {contributor.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-sm font-medium text-foreground flex items-center gap-2">
+                          {contributor.name}
+                          {getRoleIcon(contributor.role)}
+                        </p>
+                        <p className="text-xs text-muted-foreground">{contributor.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={contributor.role === 'edit' ? 'default' : 'secondary'} className="text-xs">
+                        {contributor.role === 'edit' ? 'Can Edit' : 'View Only'}
+                      </Badge>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                        onClick={() => removeContributor(contributor.id)}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+
+            {/* Add New Contributor Form */}
+            <Card className="bg-muted/30 border-border/50 border-dashed">
+              <CardContent className="p-3">
+                <div className="grid grid-cols-4 gap-2">
+                  <Input
+                    placeholder="Name"
+                    value={newContributorName}
+                    onChange={(e) => setNewContributorName(e.target.value)}
+                    className="h-8"
+                  />
+                  <Input
+                    placeholder="Email"
+                    value={newContributorEmail}
+                    onChange={(e) => setNewContributorEmail(e.target.value)}
+                    className="h-8"
+                  />
+                  <Select value={newContributorRole} onValueChange={(v) => setNewContributorRole(v as AccessRole)}>
+                    <SelectTrigger className="h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="edit">Can Edit</SelectItem>
+                      <SelectItem value="view">View Only</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 gap-1"
+                    onClick={addContributor}
+                  >
+                    <Plus className="w-3 h-3" />
+                    Add
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Action Buttons */}
