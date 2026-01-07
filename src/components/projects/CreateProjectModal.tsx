@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -20,6 +22,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
 import { 
   Plus, 
   Link, 
@@ -27,7 +36,7 @@ import {
   FileText, 
   Figma, 
   Ticket,
-  Calendar,
+  Calendar as CalendarLucide,
   Play,
   Trash2,
   ExternalLink,
@@ -63,7 +72,7 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
   const [open, setOpen] = useState(false);
   const [projectName, setProjectName] = useState('');
   const [projectSummary, setProjectSummary] = useState('');
-  const [quarter, setQuarter] = useState('');
+  const [projectDate, setProjectDate] = useState<Date>(new Date());
   const [team, setTeam] = useState('');
   const [prdLink, setPrdLink] = useState('');
   const [figmaLink, setFigmaLink] = useState('');
@@ -156,7 +165,7 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
       name: projectName,
       description: projectSummary || 'No description provided',
       summary: projectSummary || 'No summary provided',
-      quarter: quarter || 'Q1 2026',
+      quarter: format(projectDate, 'MMM d, yyyy'),
       team: team || 'General',
       testCases: projectTestCases,
       members: [
@@ -228,7 +237,7 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
   const resetForm = () => {
     setProjectName('');
     setProjectSummary('');
-    setQuarter('');
+    setProjectDate(new Date());
     setTeam('');
     setPrdLink('');
     setFigmaLink('');
@@ -281,20 +290,30 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="quarter">Quarter</Label>
-                <Select value={quarter} onValueChange={setQuarter}>
-                  <SelectTrigger id="quarter">
-                    <SelectValue placeholder="Select quarter" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Q1 2025">Q1 2025</SelectItem>
-                    <SelectItem value="Q2 2025">Q2 2025</SelectItem>
-                    <SelectItem value="Q3 2025">Q3 2025</SelectItem>
-                    <SelectItem value="Q4 2025">Q4 2025</SelectItem>
-                    <SelectItem value="Q1 2026">Q1 2026</SelectItem>
-                    <SelectItem value="Q2 2026">Q2 2026</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label>Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !projectDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {projectDate ? format(projectDate, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={projectDate}
+                      onSelect={(date) => date && setProjectDate(date)}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
             <div className="space-y-2">
