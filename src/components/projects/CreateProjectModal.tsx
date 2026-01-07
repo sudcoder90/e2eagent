@@ -488,7 +488,7 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
           {/* Scheduling Section */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
+              <CalendarLucide className="w-4 h-4" />
               Test Schedule
             </h3>
             <div className="grid grid-cols-2 gap-4">
