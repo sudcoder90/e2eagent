@@ -54,7 +54,6 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
                 <Badge variant="outline" className="text-xs font-medium">
                   {project.team} Team
                 </Badge>
-                <span className="text-sm text-muted-foreground">{project.quarter}</span>
               </div>
             </div>
           </div>
