@@ -190,60 +190,11 @@ function TestCaseItem({ testCase }: { testCase: TestCase }) {
 }
 
 export function TestCaseList({ testCases }: TestCaseListProps) {
-  const [filter, setFilter] = useState<'all' | 'passed' | 'failed' | 'pending'>('all');
-
-  const filteredTestCases = testCases.filter(tc => {
-    if (filter === 'all') return true;
-    if (filter === 'passed') return tc.status === 'passed' || tc.status === 'self-healed';
-    if (filter === 'failed') return tc.status === 'failed';
-    if (filter === 'pending') return tc.status === 'pending' || tc.status === 'running';
-    return true;
-  });
-
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Button
-          size="sm"
-          variant={filter === 'all' ? 'default' : 'outline'}
-          onClick={() => setFilter('all')}
-        >
-          All ({testCases.length})
-        </Button>
-        <Button
-          size="sm"
-          variant={filter === 'passed' ? 'default' : 'outline'}
-          onClick={() => setFilter('passed')}
-          className="gap-1"
-        >
-          <CheckCircle2 className="w-3 h-3" />
-          Passed ({testCases.filter(tc => tc.status === 'passed' || tc.status === 'self-healed').length})
-        </Button>
-        <Button
-          size="sm"
-          variant={filter === 'failed' ? 'default' : 'outline'}
-          onClick={() => setFilter('failed')}
-          className="gap-1"
-        >
-          <XCircle className="w-3 h-3" />
-          Failed ({testCases.filter(tc => tc.status === 'failed').length})
-        </Button>
-        <Button
-          size="sm"
-          variant={filter === 'pending' ? 'default' : 'outline'}
-          onClick={() => setFilter('pending')}
-          className="gap-1"
-        >
-          <Clock className="w-3 h-3" />
-          Pending ({testCases.filter(tc => tc.status === 'pending' || tc.status === 'running').length})
-        </Button>
-      </div>
-
-      <div className="space-y-3">
-        {filteredTestCases.map((testCase) => (
-          <TestCaseItem key={testCase.id} testCase={testCase} />
-        ))}
-      </div>
+    <div className="space-y-3">
+      {testCases.map((testCase) => (
+        <TestCaseItem key={testCase.id} testCase={testCase} />
+      ))}
     </div>
   );
 }
