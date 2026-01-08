@@ -102,7 +102,14 @@ export default function ProjectDetail() {
         <div className="rounded-xl border border-border bg-card p-6">
           <h3 className="text-lg font-semibold text-foreground mb-3">Project Summary</h3>
           <p className="text-muted-foreground mb-4">{project.summary}</p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <Button variant="outline" size="sm" asChild>
+              <a href="https://opif.example.com/OPIF-1345" target="_blank" rel="noopener noreferrer">
+                <FileText className="w-4 h-4 mr-2" />
+                OPIF 1345
+                <ExternalLink className="w-3 h-3 ml-2" />
+              </a>
+            </Button>
             {project.links?.prd && (
               <Button variant="outline" size="sm" asChild>
                 <a href={project.links.prd} target="_blank" rel="noopener noreferrer">
