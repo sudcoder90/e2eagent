@@ -3,13 +3,11 @@ import { getProjectStats } from '@/data/mockProjects';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
   Folder, 
   CheckCircle2, 
   XCircle, 
   Clock, 
-  Users,
   ChevronRight
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
@@ -19,8 +17,24 @@ interface ProjectCardProps {
   onClick: () => void;
 }
 
+// Generate mock platform stats based on project stats
+const getPlatformStats = (stats: ReturnType<typeof getProjectStats>) => {
+  const platforms = ['dWeb', 'mWeb', 'iOS', 'Android'] as const;
+  const totalPerPlatform = Math.ceil(stats.totalTests / 4);
+  
+  return platforms.map((platform, index) => {
+    // Distribute stats across platforms with some variation
+    const passed = Math.floor(stats.passedTests / 4) + (index < stats.passedTests % 4 ? 1 : 0);
+    const failed = Math.floor(stats.failedTests / 4) + (index < stats.failedTests % 4 ? 1 : 0);
+    const pending = Math.floor((stats.pendingTests + stats.runningTests) / 4) + (index < (stats.pendingTests + stats.runningTests) % 4 ? 1 : 0);
+    
+    return { platform, passed, failed, pending };
+  });
+};
+
 export function ProjectCard({ project, onClick }: ProjectCardProps) {
   const stats = getProjectStats(project);
+  const platformStats = getPlatformStats(stats);
   
   const getStatusBadge = () => {
     switch (project.status) {
@@ -69,39 +83,37 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
           {project.description}
         </p>
         
-        {/* Test Stats */}
-        <div className="grid grid-cols-4 gap-2 text-center">
-          <div className="p-2 rounded-lg bg-muted/50">
-            <div className="text-lg font-bold text-foreground">{stats.totalTests}</div>
-            <div className="text-xs text-muted-foreground">Total</div>
+        {/* Platform Stats Table */}
+        <div className="space-y-2">
+          <div className="grid grid-cols-4 gap-1 text-xs text-muted-foreground text-center font-medium">
+            <div>Platform</div>
+            <div className="text-success">Passed</div>
+            <div className="text-destructive">Failed</div>
+            <div className="text-warning">Pending</div>
           </div>
-          <div className="p-2 rounded-lg bg-success/10">
-            <div className="text-lg font-bold text-success flex items-center justify-center gap-1">
-              <CheckCircle2 className="w-4 h-4" />
-              {stats.passedTests}
+          {platformStats.map(({ platform, passed, failed, pending }) => (
+            <div key={platform} className="grid grid-cols-4 gap-1 text-center py-1.5 rounded bg-muted/30">
+              <div className="text-xs font-medium text-foreground">{platform}</div>
+              <div className="text-xs font-bold text-success flex items-center justify-center gap-0.5">
+                <CheckCircle2 className="w-3 h-3" />
+                {passed}
+              </div>
+              <div className="text-xs font-bold text-destructive flex items-center justify-center gap-0.5">
+                <XCircle className="w-3 h-3" />
+                {failed}
+              </div>
+              <div className="text-xs font-bold text-warning flex items-center justify-center gap-0.5">
+                <Clock className="w-3 h-3" />
+                {pending}
+              </div>
             </div>
-            <div className="text-xs text-muted-foreground">Passed</div>
-          </div>
-          <div className="p-2 rounded-lg bg-destructive/10">
-            <div className="text-lg font-bold text-destructive flex items-center justify-center gap-1">
-              <XCircle className="w-4 h-4" />
-              {stats.failedTests}
-            </div>
-            <div className="text-xs text-muted-foreground">Failed</div>
-          </div>
-          <div className="p-2 rounded-lg bg-warning/10">
-            <div className="text-lg font-bold text-warning flex items-center justify-center gap-1">
-              <Clock className="w-4 h-4" />
-              {stats.pendingTests + stats.runningTests}
-            </div>
-            <div className="text-xs text-muted-foreground">Pending</div>
-          </div>
+          ))}
         </div>
         
-        {/* Success Rate Progress */}
+        {/* Overall Success Rate Progress */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Success Rate</span>
+            <span className="text-muted-foreground">Overall Success Rate</span>
             <span className="font-medium text-foreground">{stats.successRate.toFixed(1)}%</span>
           </div>
           <Progress 
@@ -111,24 +123,7 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
         </div>
         
         {/* Footer */}
-        <div className="flex items-center justify-between pt-2 border-t border-border/50">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Users className="w-4 h-4" />
-            <div className="flex -space-x-2">
-              {project.members.slice(0, 4).map((member, i) => (
-                <Avatar key={member.id} className="w-6 h-6 border-2 border-background">
-                  <AvatarFallback className="text-xs bg-primary/20 text-primary">
-                    {member.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-              ))}
-              {project.members.length > 4 && (
-                <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs border-2 border-background">
-                  +{project.members.length - 4}
-                </div>
-              )}
-            </div>
-          </div>
+        <div className="flex items-center justify-end pt-2 border-t border-border/50">
           <span className="text-xs text-muted-foreground">
             Updated {formatDistanceToNow(project.lastUpdated, { addSuffix: true })}
           </span>
