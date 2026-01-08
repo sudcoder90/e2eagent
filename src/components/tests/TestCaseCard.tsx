@@ -9,7 +9,8 @@ import {
   Sparkles,
   Play,
   ChevronRight,
-  Image
+  Image,
+  Pencil
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
@@ -18,6 +19,7 @@ interface TestCaseCardProps {
   test: TestCase;
   onClick?: () => void;
   onRun?: () => void;
+  onEdit?: () => void;
 }
 
 const statusConfig = {
@@ -28,7 +30,7 @@ const statusConfig = {
   'self-healed': { icon: Sparkles, badge: 'success', label: 'Self-Healed', color: 'text-success' },
 };
 
-export function TestCaseCard({ test, onClick, onRun }: TestCaseCardProps) {
+export function TestCaseCard({ test, onClick, onRun, onEdit }: TestCaseCardProps) {
   const config = statusConfig[test.status];
   const Icon = config.icon;
 
@@ -89,6 +91,18 @@ export function TestCaseCard({ test, onClick, onRun }: TestCaseCardProps) {
             )}
           </div>
           <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-8 opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit?.();
+              }}
+            >
+              <Pencil className="w-3.5 h-3.5 mr-1" />
+              Edit
+            </Button>
             <Button 
               variant="ghost" 
               size="sm" 
