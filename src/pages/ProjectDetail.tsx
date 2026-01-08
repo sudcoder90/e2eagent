@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Header } from '@/components/layout/Header';
 import { TestCaseList } from '@/components/projects/TestCaseList';
-import { AccessControlPanel } from '@/components/projects/AccessControlPanel';
-import { StatsCard } from '@/components/dashboard/StatsCard';
+import { AccessControlPanelHorizontal } from '@/components/projects/AccessControlPanelHorizontal';
+import { PlatformStatsGrid, Platform } from '@/components/projects/PlatformStatsGrid';
 import { getProjectStats } from '@/data/mockProjects';
 import { useProjects } from '@/context/ProjectsContext';
 import { Button } from '@/components/ui/button';
@@ -11,22 +12,26 @@ import { Badge } from '@/components/ui/badge';
 import { 
   ArrowLeft, 
   Play, 
-  CheckCircle2, 
-  XCircle, 
-  Clock,
-  TestTube2,
-  TrendingUp,
   FileText,
   Figma,
   ExternalLink,
   FileVideo,
-  FileDown
+  FileDown,
+  Filter,
+  ChevronDown
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function ProjectDetail() {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const { projects } = useProjects();
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform>('dWeb');
   
   const project = projects.find(p => p.id === projectId);
   
@@ -50,6 +55,27 @@ export default function ProjectDetail() {
 
   const stats = getProjectStats(project);
 
+  // Filter test cases by platform (simulated - in real app would have platform field on test cases)
+  const getFilteredTestCases = () => {
+    // For demo purposes, we'll show different subsets based on platform
+    const platformIndex: Record<Platform, number> = {
+      dWeb: 0,
+      mWeb: 1,
+      iOS: 2,
+      Android: 3,
+    };
+    const index = platformIndex[selectedPlatform];
+    // Show all test cases but with simulated platform filtering
+    return project.testCases.filter((_, i) => {
+      // Distribute test cases across platforms
+      return i % 4 === index || project.testCases.length <= 4;
+    });
+  };
+
+  const filteredTestCases = getFilteredTestCases();
+
+  const platforms: Platform[] = ['dWeb', 'mWeb', 'iOS', 'Android'];
+
   return (
     <div className="min-h-screen">
       <Header 
@@ -72,7 +98,7 @@ export default function ProjectDetail() {
           </div>
         </div>
 
-        {/* Project Summary & Links */}
+        {/* Project Summary */}
         <div className="rounded-xl border border-border bg-card p-6">
           <h3 className="text-lg font-semibold text-foreground mb-3">Project Summary</h3>
           <p className="text-muted-foreground mb-4">{project.summary}</p>
@@ -98,33 +124,57 @@ export default function ProjectDetail() {
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <StatsCard title="Total Tests" value={stats.totalTests} subtitle="Test cases" icon={<TestTube2 className="w-5 h-5" />} variant="primary" />
-          <StatsCard title="Passed" value={stats.passedTests} subtitle={`${stats.successRate.toFixed(0)}% success`} icon={<CheckCircle2 className="w-5 h-5" />} variant="success" />
-          <StatsCard title="Failed" value={stats.failedTests} subtitle="Need attention" icon={<XCircle className="w-5 h-5" />} variant="destructive" />
-          <StatsCard title="Pending" value={stats.pendingTests + stats.runningTests} subtitle="Awaiting run" icon={<Clock className="w-5 h-5" />} />
-          <StatsCard title="Success Rate" value={`${stats.successRate.toFixed(1)}%`} subtitle="Overall" icon={<TrendingUp className="w-5 h-5" />} variant={stats.successRate >= 80 ? 'success' : stats.successRate >= 50 ? 'warning' : 'destructive'} />
-        </div>
+        {/* Access Control - Horizontal Layout */}
+        <AccessControlPanelHorizontal members={project.members} />
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">Test Cases</h3>
-                <p className="text-sm text-muted-foreground">{project.testCases.length} test cases with detailed step-by-step execution</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm"><FileDown className="w-4 h-4 mr-2" />Export PDF</Button>
-                <Button variant="outline" size="sm"><FileVideo className="w-4 h-4 mr-2" />View Recordings</Button>
-              </div>
+        {/* Platform Stats Grid */}
+        <PlatformStatsGrid stats={stats} />
+
+        {/* Test Cases Section */}
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Test Cases</h3>
+              <p className="text-sm text-muted-foreground">
+                {filteredTestCases.length} test cases for {selectedPlatform} with detailed step-by-step execution
+              </p>
             </div>
-            <TestCaseList testCases={project.testCases} />
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm">
+                <FileDown className="w-4 h-4 mr-2" />
+                Export PDF
+              </Button>
+              <Button variant="outline" size="sm">
+                <FileVideo className="w-4 h-4 mr-2" />
+                View Recordings
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Filter className="w-4 h-4" />
+                    Platform: {selectedPlatform}
+                    <ChevronDown className="w-3 h-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {platforms.map((platform) => (
+                    <DropdownMenuItem 
+                      key={platform}
+                      onClick={() => setSelectedPlatform(platform)}
+                      className={selectedPlatform === platform ? 'bg-accent' : ''}
+                    >
+                      {platform}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button variant="glow" size="sm" className="gap-2">
+                <Play className="w-4 h-4" />
+                Run All
+              </Button>
+            </div>
           </div>
-          <div>
-            <AccessControlPanel members={project.members} />
-          </div>
+          <TestCaseList testCases={filteredTestCases} />
         </div>
       </div>
     </div>
