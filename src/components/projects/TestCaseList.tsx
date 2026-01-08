@@ -19,7 +19,8 @@ import {
   AlertTriangle,
   Sparkles,
   FileDown,
-  Video
+  Video,
+  Pencil
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -159,6 +160,18 @@ function TestCaseItem({ testCase }: { testCase: TestCase }) {
                     <span className="text-xs">Video</span>
                   </Button>
                 )}
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  className="gap-1 h-8 px-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Edit test case logic here
+                  }}
+                >
+                  <Pencil className="w-3 h-3" />
+                  <span className="text-xs">Edit</span>
+                </Button>
                 <Button 
                   size="sm" 
                   variant="outline" 
