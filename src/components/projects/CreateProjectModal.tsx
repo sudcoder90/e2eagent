@@ -68,6 +68,8 @@ interface ContributorInput {
   role: AccessRole;
 }
 
+type PlatformType = 'Web' | 'Android' | 'iOS';
+
 export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
   const [open, setOpen] = useState(false);
   const [projectName, setProjectName] = useState('');
@@ -78,6 +80,8 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
   const [figmaLink, setFigmaLink] = useState('');
   const [opifTicket, setOpifTicket] = useState('');
   const [confluenceLink, setConfluenceLink] = useState('');
+  const [platform, setPlatform] = useState<PlatformType>('Web');
+  const [minimumVersion, setMinimumVersion] = useState('');
   const [testCases, setTestCases] = useState<TestCaseInput[]>([]);
   const [scheduleFrequency, setScheduleFrequency] = useState<string>('manual');
   const [scheduleDate, setScheduleDate] = useState('');
@@ -243,6 +247,8 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
     setFigmaLink('');
     setOpifTicket('');
     setConfluenceLink('');
+    setPlatform('Web');
+    setMinimumVersion('');
     setTestCases([]);
     setScheduleFrequency('manual');
     setScheduleDate('');
@@ -383,6 +389,37 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
                   onChange={(e) => setConfluenceLink(e.target.value)}
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Platform Selection */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-foreground">Platform</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="platform">Platform *</Label>
+                <Select value={platform} onValueChange={(value: PlatformType) => setPlatform(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select platform" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover">
+                    <SelectItem value="Web">Web</SelectItem>
+                    <SelectItem value="Android">Android</SelectItem>
+                    <SelectItem value="iOS">iOS</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {(platform === 'Android' || platform === 'iOS') && (
+                <div className="space-y-2">
+                  <Label htmlFor="minimumVersion">Minimum Version *</Label>
+                  <Input
+                    id="minimumVersion"
+                    placeholder={platform === 'Android' ? "e.g., 12.0" : "e.g., 15.0"}
+                    value={minimumVersion}
+                    onChange={(e) => setMinimumVersion(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
