@@ -36,19 +36,6 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
   const stats = getProjectStats(project);
   const platformStats = getPlatformStats(stats);
   
-  const getStatusBadge = () => {
-    switch (project.status) {
-      case 'active':
-        return <Badge variant="success">Active</Badge>;
-      case 'completed':
-        return <Badge variant="secondary">Completed</Badge>;
-      case 'paused':
-        return <Badge variant="warning">Paused</Badge>;
-      default:
-        return null;
-    }
-  };
-
   return (
     <Card 
       className="group cursor-pointer transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 bg-card/50 backdrop-blur-sm"
@@ -71,10 +58,7 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            {getStatusBadge()}
-            <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-          </div>
+          <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
         </div>
       </CardHeader>
       
