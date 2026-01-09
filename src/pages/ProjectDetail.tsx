@@ -5,6 +5,7 @@ import { Header } from '@/components/layout/Header';
 import { TestCaseList } from '@/components/projects/TestCaseList';
 import { AccessControlPanelHorizontal } from '@/components/projects/AccessControlPanelHorizontal';
 import { PlatformStatsGrid, Platform } from '@/components/projects/PlatformStatsGrid';
+import { AddTestCasesModal } from '@/components/projects/AddTestCasesModal';
 import { getProjectStats } from '@/data/mockProjects';
 import { useProjects } from '@/context/ProjectsContext';
 import { Button } from '@/components/ui/button';
@@ -18,7 +19,8 @@ import {
   FileVideo,
   FileDown,
   Filter,
-  ChevronDown
+  ChevronDown,
+  Plus
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -32,6 +34,7 @@ export default function ProjectDetail() {
   const navigate = useNavigate();
   const { projects } = useProjects();
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('dWeb');
+  const [addTestCasesOpen, setAddTestCasesOpen] = useState(false);
   
   const project = projects.find(p => p.id === projectId);
   
@@ -147,6 +150,10 @@ export default function ProjectDetail() {
               </p>
             </div>
             <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => setAddTestCasesOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Test Cases
+              </Button>
               <Button variant="outline" size="sm">
                 <FileDown className="w-4 h-4 mr-2" />
                 Export PDF
@@ -181,6 +188,10 @@ export default function ProjectDetail() {
               </Button>
             </div>
           </div>
+          <AddTestCasesModal 
+            open={addTestCasesOpen} 
+            onOpenChange={setAddTestCasesOpen}
+          />
           <TestCaseList testCases={filteredTestCases} />
         </div>
       </div>
