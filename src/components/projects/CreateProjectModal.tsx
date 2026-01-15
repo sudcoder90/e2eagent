@@ -68,7 +68,7 @@ interface ContributorInput {
   role: AccessRole;
 }
 
-type PlatformType = 'Web' | 'Android' | 'iOS';
+type PlatformType = 'Web & Native' | 'Web' | 'Android' | 'iOS';
 
 export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
   const [open, setOpen] = useState(false);
@@ -80,7 +80,7 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
   const [figmaLink, setFigmaLink] = useState('');
   const [opifTicket, setOpifTicket] = useState('');
   const [confluenceLink, setConfluenceLink] = useState('');
-  const [platform, setPlatform] = useState<PlatformType>('Web');
+  const [platform, setPlatform] = useState<PlatformType>('Web & Native');
   const [minimumVersion, setMinimumVersion] = useState('');
   const [testCases, setTestCases] = useState<TestCaseInput[]>([]);
   const [scheduleFrequency, setScheduleFrequency] = useState<string>('manual');
@@ -247,7 +247,7 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
     setFigmaLink('');
     setOpifTicket('');
     setConfluenceLink('');
-    setPlatform('Web');
+    setPlatform('Web & Native');
     setMinimumVersion('');
     setTestCases([]);
     setScheduleFrequency('manual');
@@ -403,6 +403,7 @@ export function CreateProjectModal({ trigger }: CreateProjectModalProps) {
                     <SelectValue placeholder="Select platform" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover">
+                    <SelectItem value="Web & Native">Web & Native</SelectItem>
                     <SelectItem value="Web">Web</SelectItem>
                     <SelectItem value="Android">Android</SelectItem>
                     <SelectItem value="iOS">iOS</SelectItem>
