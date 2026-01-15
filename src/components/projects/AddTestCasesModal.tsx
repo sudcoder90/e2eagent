@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-type PlatformType = 'Web' | 'Android' | 'iOS';
+type PlatformType = 'Web & Native' | 'Web' | 'Android' | 'iOS';
 type TabType = 'manual' | 'confluence' | 'upload';
 
 interface TestCaseInput {
@@ -40,14 +40,14 @@ interface AddTestCasesModalProps {
 }
 
 export function AddTestCasesModal({ open, onOpenChange, onSave }: AddTestCasesModalProps) {
-  const [platform, setPlatform] = useState<PlatformType>('Web');
+  const [platform, setPlatform] = useState<PlatformType>('Web & Native');
   const [minimumVersion, setMinimumVersion] = useState('');
   const [activeTab, setActiveTab] = useState<TabType>('manual');
   const [testCases, setTestCases] = useState<TestCaseInput[]>([]);
   const [confluenceUrl, setConfluenceUrl] = useState('');
 
   const resetForm = () => {
-    setPlatform('Web');
+    setPlatform('Web & Native');
     setMinimumVersion('');
     setActiveTab('manual');
     setTestCases([]);
@@ -94,7 +94,7 @@ export function AddTestCasesModal({ open, onOpenChange, onSave }: AddTestCasesMo
   const handleSave = (runNow: boolean) => {
     onSave?.({
       platform,
-      minimumVersion: platform !== 'Web' ? minimumVersion : undefined,
+      minimumVersion: (platform === 'Android' || platform === 'iOS') ? minimumVersion : undefined,
       testCases,
       runNow,
     });
@@ -126,6 +126,7 @@ export function AddTestCasesModal({ open, onOpenChange, onSave }: AddTestCasesMo
                     <SelectValue placeholder="Select platform" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover">
+                    <SelectItem value="Web & Native">Web & Native</SelectItem>
                     <SelectItem value="Web">Web</SelectItem>
                     <SelectItem value="Android">Android</SelectItem>
                     <SelectItem value="iOS">iOS</SelectItem>
