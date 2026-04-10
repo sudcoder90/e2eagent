@@ -263,7 +263,42 @@ function TestCaseItem({ testCase, isSelected, onSelectChange, selectedPlatform }
           </div>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <div className="px-4 pb-4">
+          <div className="px-4 pb-4 space-y-4">
+            {/* Recent Runs */}
+            {recentRuns.length > 0 && (
+              <div className="ml-11">
+                <div className="flex items-center gap-2 mb-2">
+                  <History className="w-4 h-4 text-muted-foreground" />
+                  <h5 className="text-sm font-medium text-foreground">Recent Runs</h5>
+                </div>
+                <div className="rounded-lg border border-border overflow-hidden">
+                  <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-4 p-2.5 bg-muted/30 text-xs font-medium text-muted-foreground border-b border-border">
+                    <span>Date</span>
+                    <span>Status</span>
+                    <span>Steps</span>
+                    <span>Duration</span>
+                    {showVersion && <span>Version</span>}
+                  </div>
+                  {recentRuns.map((run) => (
+                    <div key={run.id} className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-4 p-2.5 text-xs border-b border-border last:border-b-0 hover:bg-muted/20 transition-colors items-center">
+                      <span className="text-muted-foreground">{format(run.date, 'MMM d, yyyy · h:mm a')}</span>
+                      <span>
+                        {run.status === 'passed' && <Badge variant="success" className="gap-1 text-[10px] h-5"><CheckCircle2 className="w-2.5 h-2.5" />Passed</Badge>}
+                        {run.status === 'failed' && <Badge variant="destructive" className="gap-1 text-[10px] h-5"><XCircle className="w-2.5 h-2.5" />Failed</Badge>}
+                        {run.status === 'self-healed' && <Badge variant="warning" className="gap-1 text-[10px] h-5"><Sparkles className="w-2.5 h-2.5" />Healed</Badge>}
+                      </span>
+                      <span className="text-muted-foreground">{run.stepsPassed}/{run.stepsTotal}</span>
+                      <span className="text-muted-foreground">{run.duration ? `${Math.floor(run.duration / 60)}m ${Math.round(run.duration % 60)}s` : '—'}</span>
+                      {showVersion && (
+                        <span className="font-mono text-muted-foreground">{run.version || '—'}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Steps */}
             <div className="ml-11 space-y-2 border-l-2 border-border/50 pl-4">
               {testCase.steps.map((step) => (
                 <StepItem key={step.id} step={step} />
