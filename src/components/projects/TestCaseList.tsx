@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { TestCase, TestStep } from '@/types';
+import { TestCase, TestStep, RecentRun, TestStatus } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Collapsible,
@@ -24,17 +23,18 @@ import {
   Pencil,
   Monitor,
   Smartphone,
-  Tablet
+  Tablet,
+  History
 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, format } from 'date-fns';
 import { toast } from 'sonner';
+import type { Platform } from '@/components/projects/PlatformStatsGrid';
 
 type RunPlatform = 'All Platforms' | 'Web' | 'Android' | 'iOS';
 
@@ -45,8 +45,43 @@ const platformOptions: { value: RunPlatform; label: string; icon: React.ReactNod
   { value: 'iOS', label: 'iOS', icon: <Tablet className="w-3.5 h-3.5" /> },
 ];
 
+// Generate mock version info based on platform
+const getVersionForPlatform = (platform: Platform, testId: string): string | undefined => {
+  if (platform === 'iOS') {
+    const versions = ['17.0', '17.2', '16.4', '17.5', '18.0'];
+    return versions[testId.charCodeAt(testId.length - 1) % versions.length];
+  }
+  if (platform === 'Android') {
+    const versions = ['13', '14', '12', '15', '14'];
+    return versions[testId.charCodeAt(testId.length - 1) % versions.length];
+  }
+  return undefined;
+};
+
+// Generate mock recent runs for a test case
+const generateMockRecentRuns = (tc: TestCase, platform: Platform): RecentRun[] => {
+  const statuses: TestStatus[] = ['passed', 'failed', 'passed', 'self-healed', 'passed'];
+  const totalSteps = tc.steps.length;
+  return [1, 2, 3].map((i) => {
+    const status = statuses[(tc.id.charCodeAt(tc.id.length - 1) + i) % statuses.length];
+    const stepsPassed = status === 'passed' || status === 'self-healed' ? totalSteps : Math.max(1, totalSteps - i);
+    const version = getVersionForPlatform(platform, tc.id + i);
+    return {
+      id: `${tc.id}-run-${i}`,
+      status,
+      date: new Date(Date.now() - (i * 4 + 1) * 86400000),
+      duration: tc.duration ? Math.max(10, tc.duration + (Math.random() * 20 - 10)) : undefined,
+      stepsTotal: totalSteps,
+      stepsPassed,
+      platform: platform,
+      version,
+    };
+  });
+};
+
 interface TestCaseListProps {
   testCases: TestCase[];
+  selectedPlatform: Platform;
 }
 
 function StepItem({ step }: { step: TestStep }) {
