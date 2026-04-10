@@ -271,34 +271,41 @@ export function TestCaseList({ testCases }: TestCaseListProps) {
             className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
           />
           <span className="text-sm text-muted-foreground">
-            {someSelected ? `${selectedIds.size} of ${testCases.length} selected` : 'Select all'}
+            {someSelected ? `${selectedIds.size} of ${testCases.length} selected` : 'Select test cases'}
           </span>
         </div>
-        {someSelected && (
-          <div className="flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="sm" variant="outline" className="gap-1.5">
-                  <Play className="w-3.5 h-3.5" />
-                  Run Selected
-                  <ChevronDown className="w-3 h-3" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {platformOptions.map((opt) => (
-                  <DropdownMenuItem
-                    key={opt.value}
-                    onClick={() => handleBulkRun(opt.value)}
-                    className="gap-2"
-                  >
-                    {opt.icon}
-                    {opt.label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          <Button 
+            size="sm" 
+            variant="ghost" 
+            onClick={() => setSelectedIds(new Set())}
+            disabled={!someSelected}
+            className="text-muted-foreground"
+          >
+            Clear Selection
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="sm" variant="glow" className="gap-1.5">
+                <Play className="w-3.5 h-3.5" />
+                Run Selected ({selectedIds.size})
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {platformOptions.map((opt) => (
+                <DropdownMenuItem
+                  key={opt.value}
+                  onClick={() => handleBulkRun(opt.value)}
+                  className="gap-2"
+                  disabled={!someSelected}
+                >
+                  {opt.icon}
+                  {opt.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {testCases.map((testCase) => (
