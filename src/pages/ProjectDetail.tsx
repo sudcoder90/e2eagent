@@ -211,7 +211,7 @@ export default function ProjectDetail() {
             open={addTestCasesOpen} 
             onOpenChange={setAddTestCasesOpen}
           />
-          <TestCaseList testCases={filteredTestCases} />
+          <TestCaseList testCases={filteredTestCases} selectedPlatform={selectedPlatform} />
         </div>
       </div>
     </div>
