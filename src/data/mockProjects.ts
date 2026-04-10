@@ -1,4 +1,4 @@
-import { Project, TestCase, TestStep, ProjectMember } from '@/types';
+import { Project, TestCase, TestStep, TestStatus, RecentRun, ProjectMember } from '@/types';
 
 const createMembers = (): ProjectMember[] => [
   { id: 'm1', name: 'Sarah Chen', email: 'sarah.chen@walmart.com', role: 'owner' },
