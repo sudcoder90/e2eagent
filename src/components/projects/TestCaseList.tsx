@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { TestCase, TestStep } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Collapsible,
