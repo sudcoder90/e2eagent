@@ -96,7 +96,7 @@ export function AddTestCasesModal({ open, onOpenChange, onSave }: AddTestCasesMo
   const handleSave = (runNow: boolean) => {
     onSave?.({
       platform,
-      minimumVersion: (platform === 'Android' || platform === 'iOS') ? minimumVersion : undefined,
+      minimumVersion: androidVersion || iosVersion || undefined,
       testCases,
       runNow,
     });
