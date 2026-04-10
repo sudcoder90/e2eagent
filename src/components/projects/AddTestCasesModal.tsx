@@ -118,7 +118,7 @@ export function AddTestCasesModal({ open, onOpenChange, onSave }: AddTestCasesMo
           {/* Platform Selection */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-foreground">Platform</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="platform">Platform *</Label>
                 <Select value={platform} onValueChange={(value: PlatformType) => setPlatform(value)}>
@@ -133,21 +133,36 @@ export function AddTestCasesModal({ open, onOpenChange, onSave }: AddTestCasesMo
                   </SelectContent>
                 </Select>
               </div>
-              {(platform === 'Android' || platform === 'iOS') && (
-                <div className="space-y-2">
-                  <Label htmlFor="minimumVersion">Minimum Version</Label>
-                  <Input
-                    id="minimumVersion"
-                    placeholder={platform === 'Android' ? "e.g., 12.0" : "e.g., 15.0"}
-                    value={minimumVersion}
-                    onChange={(e) => setMinimumVersion(e.target.value)}
-                  />
-                  <p className="text-xs text-muted-foreground italic">
-                    If no version mentioned then we will select the latest version available
-                  </p>
-                </div>
+              {(platform === 'Android' || platform === 'iOS' || platform === 'Web & Native') && (
+                <>
+                  {(platform === 'Android' || platform === 'Web & Native') && (
+                    <div className="space-y-2">
+                      <Label>Android Version</Label>
+                      <Input
+                        placeholder="e.g., 12.0"
+                        value={androidVersion}
+                        onChange={(e) => setAndroidVersion(e.target.value)}
+                      />
+                    </div>
+                  )}
+                  {(platform === 'iOS' || platform === 'Web & Native') && (
+                    <div className="space-y-2">
+                      <Label>iOS Version</Label>
+                      <Input
+                        placeholder="e.g., 15.0"
+                        value={iosVersion}
+                        onChange={(e) => setIosVersion(e.target.value)}
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </div>
+            {(platform === 'Android' || platform === 'iOS' || platform === 'Web & Native') && (
+              <p className="text-xs text-muted-foreground italic">
+                If no version mentioned then we will select the latest version available
+              </p>
+            )}
           </div>
 
           {/* Test Cases Section */}
