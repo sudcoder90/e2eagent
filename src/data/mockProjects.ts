@@ -683,7 +683,7 @@ export const mockProjects: Project[] = [
     summary: 'This project focuses on enhancing the cart experience by improving quantity update flows, implementing robust promo code functionality, adding a "Save for Later" feature, and ensuring cart persistence across sessions. The goal is to reduce cart abandonment by 15% and improve conversion rates.',
     quarter: 'Q1 2026',
     team: 'Cart',
-    testCases: cartPageTestCases.map(addOutputToTestCase),
+    testCases: cartPageTestCases.map(enrichTestCase),
     members: createMembers(),
     createdAt: new Date('2025-10-15'),
     lastUpdated: new Date(Date.now() - 3600000),
@@ -705,7 +705,7 @@ export const mockProjects: Project[] = [
     summary: 'Comprehensive overhaul of the signup flow to improve conversion rates and accessibility. Key features include Google and Apple OAuth integration, WCAG 2.1 AA compliance, mobile-first responsive design, and streamlined email verification. Target: 25% improvement in signup completion rates.',
     quarter: 'Q2 2026',
     team: 'CXO',
-    testCases: signupFlowTestCases.map(addOutputToTestCase),
+    testCases: signupFlowTestCases.map(enrichTestCase),
     members: [
       { id: 'm1', name: 'Sarah Chen', email: 'sarah.chen@amazon.com', role: 'owner' },
       { id: 'm6', name: 'Alex Martinez', email: 'alex.m@amazon.com', role: 'edit' },
@@ -731,7 +731,7 @@ export const mockProjects: Project[] = [
     summary: 'Performance-focused redesign of the homepage splash page. Key objectives include achieving LCP under 2.5s, implementing a monthly/annual pricing toggle with smooth animations, adding hero carousel functionality, and ensuring seamless responsive behavior across all device sizes.',
     quarter: 'Q1 2026',
     team: 'Walmart+',
-    testCases: splashPageTestCases.map(addOutputToTestCase),
+    testCases: splashPageTestCases.map(enrichTestCase),
     members: [
       { id: 'm1', name: 'Sarah Chen', email: 'sarah.chen@amazon.com', role: 'edit' },
       { id: 'm8', name: 'Jordan Lee', email: 'jordan.l@amazon.com', role: 'owner' },
