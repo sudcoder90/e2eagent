@@ -169,31 +169,35 @@ function TestCaseItem({ testCase, isSelected, onSelectChange, selectedPlatform }
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <div className="p-4 cursor-pointer hover:bg-muted/30 transition-colors">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <Checkbox
-                  checked={isSelected}
-                  onCheckedChange={(checked) => onSelectChange(!!checked)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="data-[state=checked]:bg-primary data-[state=checked]:border-primary flex-shrink-0"
-                />
-                {isOpen ? (
-                  <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                ) : (
-                  <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                )}
-                <h4 className="font-medium text-foreground truncate">{testCase.name}</h4>
-                {getStatusBadge()}
-                {showVersion && version && (
-                  <Badge variant="outline" className="gap-1 text-xs font-mono">
-                    {selectedPlatform === 'iOS' ? 'iOS' : 'Android'} {version}
-                  </Badge>
-                )}
-                <span className="text-xs text-muted-foreground whitespace-nowrap">
-                  {totalSteps} steps · {passedSteps}/{totalSteps} passed
-                  {testCase.duration ? ` · ${Math.floor(testCase.duration / 60)}m ${Math.round(testCase.duration % 60)}s` : ''}
-                  {testCase.lastRun && ` · Last run ${formatDistanceToNow(testCase.lastRun, { addSuffix: false })} ago`}
-                </span>
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={(checked) => onSelectChange(!!checked)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="data-[state=checked]:bg-primary data-[state=checked]:border-primary flex-shrink-0"
+                  />
+                  {isOpen ? (
+                    <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  )}
+                  <h4 className="font-medium text-foreground truncate">{testCase.name}</h4>
+                  {getStatusBadge()}
+                  {showVersion && version && (
+                    <Badge variant="outline" className="gap-1 text-xs font-mono flex-shrink-0">
+                      {selectedPlatform === 'iOS' ? 'iOS' : 'Android'} {version}
+                    </Badge>
+                  )}
+                </div>
+                <div className="ml-11 mt-1">
+                  <span className="text-xs text-muted-foreground">
+                    {totalSteps} steps · {passedSteps}/{totalSteps} passed
+                    {testCase.duration ? ` · ${Math.floor(testCase.duration / 60)}m ${Math.round(testCase.duration % 60)}s` : ''}
+                    {testCase.lastRun && ` · Last run ${formatDistanceToNow(testCase.lastRun, { addSuffix: false })} ago`}
+                  </span>
+                </div>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
                 {testCase.output?.pdfUrl && (
