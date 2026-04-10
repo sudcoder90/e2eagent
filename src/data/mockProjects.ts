@@ -6,6 +6,13 @@ const createMembers = (): ProjectMember[] => [
   { id: 'm3', name: 'Emily Rodriguez', email: 'emily.r@walmart.com', role: 'edit' },
   { id: 'm4', name: 'David Kim', email: 'david.kim@walmart.com', role: 'view' },
   { id: 'm5', name: 'Lisa Thompson', email: 'lisa.t@walmart.com', role: 'view' },
+  { id: 'm6', name: 'James Patel', email: 'james.p@walmart.com', role: 'edit' },
+  { id: 'm7', name: 'Anita Gupta', email: 'anita.g@walmart.com', role: 'view' },
+  { id: 'm8', name: 'Carlos Rivera', email: 'carlos.r@walmart.com', role: 'edit' },
+  { id: 'm9', name: 'Priya Sharma', email: 'priya.s@walmart.com', role: 'view' },
+  { id: 'm10', name: 'Michael Lee', email: 'michael.l@walmart.com', role: 'view' },
+  { id: 'm11', name: 'Rachel Adams', email: 'rachel.a@walmart.com', role: 'edit' },
+  { id: 'm12', name: 'Kevin Wang', email: 'kevin.w@walmart.com', role: 'view' },
 ];
 
 const createSteps = (stepDescriptions: string[], failedStep?: number, failureReason?: string): TestStep[] => {
