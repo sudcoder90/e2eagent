@@ -26,18 +26,37 @@ const createSteps = (stepDescriptions: string[], failedStep?: number, failureRea
   }));
 };
 
-// Helper to add output to test cases that have been run
-const addOutputToTestCase = (tc: TestCase): TestCase => {
-  if (tc.lastRun) {
+// Helper to generate recent runs for a test case
+const generateRecentRuns = (tc: TestCase): RecentRun[] => {
+  const statuses: TestStatus[] = ['passed', 'failed', 'passed', 'self-healed', 'passed'];
+  const totalSteps = tc.steps.length;
+  return [1, 2, 3].map((i) => {
+    const status = statuses[(tc.id.charCodeAt(tc.id.length - 1) + i) % statuses.length];
+    const stepsPassed = status === 'passed' ? totalSteps : Math.max(1, totalSteps - i);
     return {
-      ...tc,
-      output: {
-        pdfUrl: `/reports/${tc.id}.pdf`,
-        videoUrl: `/recordings/${tc.id}.mp4`,
-      },
+      id: `${tc.id}-run-${i}`,
+      status,
+      date: new Date(Date.now() - (i * 4 + 1) * 86400000),
+      duration: tc.duration ? tc.duration + (Math.random() * 20 - 10) : undefined,
+      stepsTotal: totalSteps,
+      stepsPassed,
+      platform: tc.platform,
+      version: tc.version,
     };
+  });
+};
+
+// Helper to add output and recent runs to test cases that have been run
+const enrichTestCase = (tc: TestCase): TestCase => {
+  const enriched = { ...tc };
+  if (tc.lastRun) {
+    enriched.output = enriched.output || {
+      pdfUrl: `/reports/${tc.id}.pdf`,
+      videoUrl: `/recordings/${tc.id}.mp4`,
+    };
+    enriched.recentRuns = generateRecentRuns(tc);
   }
-  return tc;
+  return enriched;
 };
 
 const cartPageTestCases: TestCase[] = [
