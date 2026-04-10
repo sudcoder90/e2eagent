@@ -41,14 +41,16 @@ interface AddTestCasesModalProps {
 
 export function AddTestCasesModal({ open, onOpenChange, onSave }: AddTestCasesModalProps) {
   const [platform, setPlatform] = useState<PlatformType>('Web & Native');
-  const [minimumVersion, setMinimumVersion] = useState('');
+  const [androidVersion, setAndroidVersion] = useState('');
+  const [iosVersion, setIosVersion] = useState('');
   const [activeTab, setActiveTab] = useState<TabType>('manual');
   const [testCases, setTestCases] = useState<TestCaseInput[]>([]);
   const [confluenceUrl, setConfluenceUrl] = useState('');
 
   const resetForm = () => {
     setPlatform('Web & Native');
-    setMinimumVersion('');
+    setAndroidVersion('');
+    setIosVersion('');
     setActiveTab('manual');
     setTestCases([]);
     setConfluenceUrl('');
@@ -94,7 +96,7 @@ export function AddTestCasesModal({ open, onOpenChange, onSave }: AddTestCasesMo
   const handleSave = (runNow: boolean) => {
     onSave?.({
       platform,
-      minimumVersion: (platform === 'Android' || platform === 'iOS') ? minimumVersion : undefined,
+      minimumVersion: androidVersion || iosVersion || undefined,
       testCases,
       runNow,
     });
@@ -118,7 +120,7 @@ export function AddTestCasesModal({ open, onOpenChange, onSave }: AddTestCasesMo
           {/* Platform Selection */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-foreground">Platform</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="platform">Platform *</Label>
                 <Select value={platform} onValueChange={(value: PlatformType) => setPlatform(value)}>
@@ -133,21 +135,36 @@ export function AddTestCasesModal({ open, onOpenChange, onSave }: AddTestCasesMo
                   </SelectContent>
                 </Select>
               </div>
-              {(platform === 'Android' || platform === 'iOS') && (
-                <div className="space-y-2">
-                  <Label htmlFor="minimumVersion">Minimum Version</Label>
-                  <Input
-                    id="minimumVersion"
-                    placeholder={platform === 'Android' ? "e.g., 12.0" : "e.g., 15.0"}
-                    value={minimumVersion}
-                    onChange={(e) => setMinimumVersion(e.target.value)}
-                  />
-                  <p className="text-xs text-muted-foreground italic">
-                    If no version mentioned then we will select the latest version available
-                  </p>
-                </div>
+              {(platform === 'Android' || platform === 'iOS' || platform === 'Web & Native') && (
+                <>
+                  {(platform === 'Android' || platform === 'Web & Native') && (
+                    <div className="space-y-2">
+                      <Label>Android Version</Label>
+                      <Input
+                        placeholder="e.g., 12.0"
+                        value={androidVersion}
+                        onChange={(e) => setAndroidVersion(e.target.value)}
+                      />
+                    </div>
+                  )}
+                  {(platform === 'iOS' || platform === 'Web & Native') && (
+                    <div className="space-y-2">
+                      <Label>iOS Version</Label>
+                      <Input
+                        placeholder="e.g., 15.0"
+                        value={iosVersion}
+                        onChange={(e) => setIosVersion(e.target.value)}
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </div>
+            {(platform === 'Android' || platform === 'iOS' || platform === 'Web & Native') && (
+              <p className="text-xs text-muted-foreground italic">
+                If no version mentioned then we will select the latest version available
+              </p>
+            )}
           </div>
 
           {/* Test Cases Section */}
