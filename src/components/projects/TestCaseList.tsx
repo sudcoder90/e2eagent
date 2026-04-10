@@ -184,6 +184,11 @@ function TestCaseItem({ testCase, isSelected, onSelectChange, selectedPlatform }
                 )}
                 <h4 className="font-medium text-foreground truncate">{testCase.name}</h4>
                 {getStatusBadge()}
+                {showVersion && version && (
+                  <Badge variant="outline" className="gap-1 text-xs font-mono">
+                    {selectedPlatform === 'iOS' ? 'iOS' : 'Android'} {version}
+                  </Badge>
+                )}
                 <span className="text-xs text-muted-foreground whitespace-nowrap">
                   {totalSteps} steps · {passedSteps}/{totalSteps} passed
                   {testCase.duration ? ` · ${Math.floor(testCase.duration / 60)}m ${Math.round(testCase.duration % 60)}s` : ''}
