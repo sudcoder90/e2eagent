@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Header } from '@/components/layout/Header';
+import { toast } from 'sonner';
 import { TestCaseList } from '@/components/projects/TestCaseList';
 import { AccessControlPanelHorizontal } from '@/components/projects/AccessControlPanelHorizontal';
 import { PlatformStatsGrid, Platform } from '@/components/projects/PlatformStatsGrid';
@@ -20,7 +21,10 @@ import {
   FileDown,
   Filter,
   ChevronDown,
-  Plus
+  Plus,
+  Monitor,
+  Smartphone,
+  Tablet
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -94,9 +98,29 @@ export default function ProjectDetail() {
           </Button>
           <div className="flex items-center gap-3">
             <Badge variant="outline" className="text-sm">{format(new Date(), 'MMM d, yyyy')}</Badge>
-            <Button variant="glow" className="gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Play className="w-4 h-4" />
+                  Run by Platform
+                  <ChevronDown className="w-3 h-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => toast.success('Running all tests on Web')} className="gap-2">
+                  <Monitor className="w-4 h-4" /> Web
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => toast.success('Running all tests on Android')} className="gap-2">
+                  <Smartphone className="w-4 h-4" /> Android
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => toast.success('Running all tests on iOS')} className="gap-2">
+                  <Tablet className="w-4 h-4" /> iOS
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button variant="glow" className="gap-2" onClick={() => toast.success('Running all tests on all platforms')}>
               <Play className="w-4 h-4" />
-              Run All Tests
+              Run All
             </Button>
           </div>
         </div>
