@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { TestCase, TestStep } from '@/types';
+import { TestCase, TestStep, RecentRun, TestStatus } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Collapsible,
@@ -24,17 +23,18 @@ import {
   Pencil,
   Monitor,
   Smartphone,
-  Tablet
+  Tablet,
+  History
 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, format } from 'date-fns';
 import { toast } from 'sonner';
+import type { Platform } from '@/components/projects/PlatformStatsGrid';
 
 type RunPlatform = 'All Platforms' | 'Web' | 'Android' | 'iOS';
 
@@ -45,8 +45,43 @@ const platformOptions: { value: RunPlatform; label: string; icon: React.ReactNod
   { value: 'iOS', label: 'iOS', icon: <Tablet className="w-3.5 h-3.5" /> },
 ];
 
+// Generate mock version info based on platform
+const getVersionForPlatform = (platform: Platform, testId: string): string | undefined => {
+  if (platform === 'iOS') {
+    const versions = ['17.0', '17.2', '16.4', '17.5', '18.0'];
+    return versions[testId.charCodeAt(testId.length - 1) % versions.length];
+  }
+  if (platform === 'Android') {
+    const versions = ['13', '14', '12', '15', '14'];
+    return versions[testId.charCodeAt(testId.length - 1) % versions.length];
+  }
+  return undefined;
+};
+
+// Generate mock recent runs for a test case
+const generateMockRecentRuns = (tc: TestCase, platform: Platform): RecentRun[] => {
+  const statuses: TestStatus[] = ['passed', 'failed', 'passed', 'self-healed', 'passed'];
+  const totalSteps = tc.steps.length;
+  return [1, 2, 3].map((i) => {
+    const status = statuses[(tc.id.charCodeAt(tc.id.length - 1) + i) % statuses.length];
+    const stepsPassed = status === 'passed' || status === 'self-healed' ? totalSteps : Math.max(1, totalSteps - i);
+    const version = getVersionForPlatform(platform, tc.id + i);
+    return {
+      id: `${tc.id}-run-${i}`,
+      status,
+      date: new Date(Date.now() - (i * 4 + 1) * 86400000),
+      duration: tc.duration ? Math.max(10, tc.duration + (Math.random() * 20 - 10)) : undefined,
+      stepsTotal: totalSteps,
+      stepsPassed,
+      platform: platform,
+      version,
+    };
+  });
+};
+
 interface TestCaseListProps {
   testCases: TestCase[];
+  selectedPlatform: Platform;
 }
 
 function StepItem({ step }: { step: TestStep }) {
@@ -96,10 +131,14 @@ interface TestCaseItemProps {
   testCase: TestCase;
   isSelected: boolean;
   onSelectChange: (checked: boolean) => void;
+  selectedPlatform: Platform;
 }
 
-function TestCaseItem({ testCase, isSelected, onSelectChange }: TestCaseItemProps) {
+function TestCaseItem({ testCase, isSelected, onSelectChange, selectedPlatform }: TestCaseItemProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const showVersion = selectedPlatform === 'iOS' || selectedPlatform === 'Android';
+  const version = showVersion ? getVersionForPlatform(selectedPlatform, testCase.id) : undefined;
+  const recentRuns = testCase.lastRun ? generateMockRecentRuns(testCase, selectedPlatform) : [];
 
   const getStatusBadge = () => {
     switch (testCase.status) {
@@ -145,6 +184,11 @@ function TestCaseItem({ testCase, isSelected, onSelectChange }: TestCaseItemProp
                 )}
                 <h4 className="font-medium text-foreground truncate">{testCase.name}</h4>
                 {getStatusBadge()}
+                {showVersion && version && (
+                  <Badge variant="outline" className="gap-1 text-xs font-mono">
+                    {selectedPlatform === 'iOS' ? 'iOS' : 'Android'} {version}
+                  </Badge>
+                )}
                 <span className="text-xs text-muted-foreground whitespace-nowrap">
                   {totalSteps} steps · {passedSteps}/{totalSteps} passed
                   {testCase.duration ? ` · ${Math.floor(testCase.duration / 60)}m ${Math.round(testCase.duration % 60)}s` : ''}
@@ -219,7 +263,42 @@ function TestCaseItem({ testCase, isSelected, onSelectChange }: TestCaseItemProp
           </div>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <div className="px-4 pb-4">
+          <div className="px-4 pb-4 space-y-4">
+            {/* Recent Runs */}
+            {recentRuns.length > 0 && (
+              <div className="ml-11">
+                <div className="flex items-center gap-2 mb-2">
+                  <History className="w-4 h-4 text-muted-foreground" />
+                  <h5 className="text-sm font-medium text-foreground">Recent Runs</h5>
+                </div>
+                <div className="rounded-lg border border-border overflow-hidden">
+                  <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-4 p-2.5 bg-muted/30 text-xs font-medium text-muted-foreground border-b border-border">
+                    <span>Date</span>
+                    <span>Status</span>
+                    <span>Steps</span>
+                    <span>Duration</span>
+                    {showVersion && <span>Version</span>}
+                  </div>
+                  {recentRuns.map((run) => (
+                    <div key={run.id} className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-4 p-2.5 text-xs border-b border-border last:border-b-0 hover:bg-muted/20 transition-colors items-center">
+                      <span className="text-muted-foreground">{format(run.date, 'MMM d, yyyy · h:mm a')}</span>
+                      <span>
+                        {run.status === 'passed' && <Badge variant="success" className="gap-1 text-[10px] h-5"><CheckCircle2 className="w-2.5 h-2.5" />Passed</Badge>}
+                        {run.status === 'failed' && <Badge variant="destructive" className="gap-1 text-[10px] h-5"><XCircle className="w-2.5 h-2.5" />Failed</Badge>}
+                        {run.status === 'self-healed' && <Badge variant="warning" className="gap-1 text-[10px] h-5"><Sparkles className="w-2.5 h-2.5" />Healed</Badge>}
+                      </span>
+                      <span className="text-muted-foreground">{run.stepsPassed}/{run.stepsTotal}</span>
+                      <span className="text-muted-foreground">{run.duration ? `${Math.floor(run.duration / 60)}m ${Math.round(run.duration % 60)}s` : '—'}</span>
+                      {showVersion && (
+                        <span className="font-mono text-muted-foreground">{run.version || '—'}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Steps */}
             <div className="ml-11 space-y-2 border-l-2 border-border/50 pl-4">
               {testCase.steps.map((step) => (
                 <StepItem key={step.id} step={step} />
@@ -232,7 +311,7 @@ function TestCaseItem({ testCase, isSelected, onSelectChange }: TestCaseItemProp
   );
 }
 
-export function TestCaseList({ testCases }: TestCaseListProps) {
+export function TestCaseList({ testCases, selectedPlatform }: TestCaseListProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const allSelected = testCases.length > 0 && selectedIds.size === testCases.length;
@@ -314,6 +393,7 @@ export function TestCaseList({ testCases }: TestCaseListProps) {
           testCase={testCase}
           isSelected={selectedIds.has(testCase.id)}
           onSelectChange={(checked) => toggleSelect(testCase.id, checked)}
+          selectedPlatform={selectedPlatform}
         />
       ))}
     </div>
