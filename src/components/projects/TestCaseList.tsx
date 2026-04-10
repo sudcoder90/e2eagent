@@ -131,10 +131,14 @@ interface TestCaseItemProps {
   testCase: TestCase;
   isSelected: boolean;
   onSelectChange: (checked: boolean) => void;
+  selectedPlatform: Platform;
 }
 
-function TestCaseItem({ testCase, isSelected, onSelectChange }: TestCaseItemProps) {
+function TestCaseItem({ testCase, isSelected, onSelectChange, selectedPlatform }: TestCaseItemProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const showVersion = selectedPlatform === 'iOS' || selectedPlatform === 'Android';
+  const version = showVersion ? getVersionForPlatform(selectedPlatform, testCase.id) : undefined;
+  const recentRuns = testCase.lastRun ? generateMockRecentRuns(testCase, selectedPlatform) : [];
 
   const getStatusBadge = () => {
     switch (testCase.status) {
