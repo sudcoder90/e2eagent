@@ -196,7 +196,6 @@ export function AccessControlPanelHorizontal({ members }: AccessControlPanelHori
     </div>
   );
 }
-export function AccessControlPanelHorizontal({ members }: AccessControlPanelHorizontalProps) {
   const getRoleIcon = (role: AccessRole) => {
     switch (role) {
       case 'owner':
