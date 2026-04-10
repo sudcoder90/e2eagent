@@ -22,6 +22,17 @@ export interface TestStep {
   duration?: number;
 }
 
+export interface RecentRun {
+  id: string;
+  status: TestStatus;
+  date: Date;
+  duration?: number;
+  stepsTotal: number;
+  stepsPassed: number;
+  platform?: string;
+  version?: string;
+}
+
 export interface TestCase {
   id: string;
   name: string;
@@ -35,6 +46,9 @@ export interface TestCase {
   selfHealed?: boolean;
   failedStepSummary?: string;
   output?: TestOutput;
+  platform?: string;
+  version?: string;
+  recentRuns?: RecentRun[];
 }
 
 export interface ProjectLinks {
