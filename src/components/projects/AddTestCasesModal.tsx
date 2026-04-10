@@ -41,14 +41,16 @@ interface AddTestCasesModalProps {
 
 export function AddTestCasesModal({ open, onOpenChange, onSave }: AddTestCasesModalProps) {
   const [platform, setPlatform] = useState<PlatformType>('Web & Native');
-  const [minimumVersion, setMinimumVersion] = useState('');
+  const [androidVersion, setAndroidVersion] = useState('');
+  const [iosVersion, setIosVersion] = useState('');
   const [activeTab, setActiveTab] = useState<TabType>('manual');
   const [testCases, setTestCases] = useState<TestCaseInput[]>([]);
   const [confluenceUrl, setConfluenceUrl] = useState('');
 
   const resetForm = () => {
     setPlatform('Web & Native');
-    setMinimumVersion('');
+    setAndroidVersion('');
+    setIosVersion('');
     setActiveTab('manual');
     setTestCases([]);
     setConfluenceUrl('');
