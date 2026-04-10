@@ -135,13 +135,16 @@ export function AddTestCasesModal({ open, onOpenChange, onSave }: AddTestCasesMo
               </div>
               {(platform === 'Android' || platform === 'iOS') && (
                 <div className="space-y-2">
-                  <Label htmlFor="minimumVersion">Minimum Version *</Label>
+                  <Label htmlFor="minimumVersion">Minimum Version</Label>
                   <Input
                     id="minimumVersion"
                     placeholder={platform === 'Android' ? "e.g., 12.0" : "e.g., 15.0"}
                     value={minimumVersion}
                     onChange={(e) => setMinimumVersion(e.target.value)}
                   />
+                  <p className="text-xs text-muted-foreground italic">
+                    If no version mentioned then we will select the latest version available
+                  </p>
                 </div>
               )}
             </div>
