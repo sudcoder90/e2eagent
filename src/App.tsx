@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProjectsProvider } from "@/context/ProjectsContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import Index from "./pages/Index";
 import ProjectDetail from "./pages/ProjectDetail";
 import Scheduling from "./pages/Scheduling";
@@ -18,6 +19,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <ThemeProvider>
       <ProjectsProvider>
         <Toaster />
         <Sonner />
@@ -35,6 +37,7 @@ const App = () => (
           </MainLayout>
         </BrowserRouter>
       </ProjectsProvider>
+      </ThemeProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
