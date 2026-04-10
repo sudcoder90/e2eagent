@@ -311,7 +311,7 @@ function TestCaseItem({ testCase, isSelected, onSelectChange, selectedPlatform }
   );
 }
 
-export function TestCaseList({ testCases }: TestCaseListProps) {
+export function TestCaseList({ testCases, selectedPlatform }: TestCaseListProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const allSelected = testCases.length > 0 && selectedIds.size === testCases.length;
@@ -393,6 +393,7 @@ export function TestCaseList({ testCases }: TestCaseListProps) {
           testCase={testCase}
           isSelected={selectedIds.has(testCase.id)}
           onSelectChange={(checked) => toggleSelect(testCase.id, checked)}
+          selectedPlatform={selectedPlatform}
         />
       ))}
     </div>
