@@ -124,53 +124,34 @@ function TestCaseItem({ testCase, isSelected, onSelectChange }: TestCaseItemProp
   const totalSteps = testCase.steps.length;
 
   return (
-    <Card className={`bg-card/50 backdrop-blur-sm transition-all duration-200 ${
+    <div className={`rounded-lg border border-border bg-card/50 transition-all duration-200 ${
       testCase.status === 'failed' ? 'border-destructive/30' : ''
     } ${isSelected ? 'ring-1 ring-primary/50' : ''}`}>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
-          <CardContent className="p-4 cursor-pointer hover:bg-muted/30 transition-colors">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-3 flex-1 min-w-0">
-                <div className="flex items-center gap-2 mt-1">
-                  <Checkbox
-                    checked={isSelected}
-                    onCheckedChange={(checked) => {
-                      onSelectChange(!!checked);
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                    className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                  />
-                  {isOpen ? (
-                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="font-medium text-foreground">{testCase.name}</h4>
-                    {getStatusBadge()}
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
-                    {testCase.description}
-                  </p>
-                  <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                    <span>{totalSteps} steps</span>
-                    <span>{passedSteps}/{totalSteps} passed</span>
-                    {testCase.duration && <span>{testCase.duration.toFixed(1)}s</span>}
-                    {testCase.lastRun && (
-                      <span>Last run {formatDistanceToNow(testCase.lastRun, { addSuffix: true })}</span>
-                    )}
-                  </div>
-                  {testCase.failedStepSummary && (
-                    <div className="mt-2 p-2 rounded bg-destructive/10 border border-destructive/20">
-                      <p className="text-xs text-destructive">{testCase.failedStepSummary}</p>
-                    </div>
-                  )}
-                </div>
+          <div className="p-4 cursor-pointer hover:bg-muted/30 transition-colors">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <Checkbox
+                  checked={isSelected}
+                  onCheckedChange={(checked) => onSelectChange(!!checked)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="data-[state=checked]:bg-primary data-[state=checked]:border-primary flex-shrink-0"
+                />
+                {isOpen ? (
+                  <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                ) : (
+                  <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                )}
+                <h4 className="font-medium text-foreground truncate">{testCase.name}</h4>
+                {getStatusBadge()}
+                <span className="text-xs text-muted-foreground whitespace-nowrap">
+                  {totalSteps} steps · {passedSteps}/{totalSteps} passed
+                  {testCase.duration ? ` · ${Math.floor(testCase.duration / 60)}m ${Math.round(testCase.duration % 60)}s` : ''}
+                  {testCase.lastRun && ` · Last run ${formatDistanceToNow(testCase.lastRun, { addSuffix: false })} ago`}
+                </span>
               </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-1 flex-shrink-0">
                 {testCase.output?.pdfUrl && (
                   <Button 
                     size="sm" 
@@ -181,7 +162,7 @@ function TestCaseItem({ testCase, isSelected, onSelectChange }: TestCaseItemProp
                       window.open(testCase.output?.pdfUrl, '_blank');
                     }}
                   >
-                    <FileDown className="w-3 h-3" />
+                    <FileDown className="w-3.5 h-3.5" />
                     <span className="text-xs">PDF</span>
                   </Button>
                 )}
@@ -195,7 +176,7 @@ function TestCaseItem({ testCase, isSelected, onSelectChange }: TestCaseItemProp
                       window.open(testCase.output?.videoUrl, '_blank');
                     }}
                   >
-                    <Video className="w-3 h-3" />
+                    <Video className="w-3.5 h-3.5" />
                     <span className="text-xs">Video</span>
                   </Button>
                 )}
@@ -203,25 +184,21 @@ function TestCaseItem({ testCase, isSelected, onSelectChange }: TestCaseItemProp
                   size="sm" 
                   variant="ghost" 
                   className="gap-1 h-8 px-2"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <Pencil className="w-3 h-3" />
+                  <Pencil className="w-3.5 h-3.5" />
                   <span className="text-xs">Edit</span>
                 </Button>
-                {/* Run with platform picker */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button 
                       size="sm" 
-                      variant="outline" 
-                      className="gap-1.5"
+                      variant="ghost" 
+                      className="gap-1 h-8 px-2"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <Play className="w-3 h-3" />
-                      Run
-                      <ChevronDown className="w-3 h-3" />
+                      <Play className="w-3.5 h-3.5" />
+                      <span className="text-xs">Run</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
@@ -239,11 +216,11 @@ function TestCaseItem({ testCase, isSelected, onSelectChange }: TestCaseItemProp
                 </DropdownMenu>
               </div>
             </div>
-          </CardContent>
+          </div>
         </CollapsibleTrigger>
         <CollapsibleContent>
           <div className="px-4 pb-4">
-            <div className="ml-7 space-y-2 border-l-2 border-border/50 pl-4">
+            <div className="ml-11 space-y-2 border-l-2 border-border/50 pl-4">
               {testCase.steps.map((step) => (
                 <StepItem key={step.id} step={step} />
               ))}
@@ -251,7 +228,7 @@ function TestCaseItem({ testCase, isSelected, onSelectChange }: TestCaseItemProp
           </div>
         </CollapsibleContent>
       </Collapsible>
-    </Card>
+    </div>
   );
 }
 
