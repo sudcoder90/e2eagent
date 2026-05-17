@@ -25,7 +25,7 @@ import {
   Smartphone,
   Tablet,
   History,
-  Bug,
+  Flag,
 } from 'lucide-react';
 import { TicketsDialog } from './BugTicketDialogs';
 import {
@@ -241,7 +241,7 @@ function TestCaseItem({ testCase, isSelected, onSelectChange, selectedPlatform }
                     setTicketsOpen(true);
                   }}
                 >
-                  <Bug className="w-3.5 h-3.5" />
+                  <Flag className="w-3.5 h-3.5" />
                   <span className="text-xs">Tickets</span>
                   <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-warning text-[9px] font-semibold text-warning-foreground flex items-center justify-center">
                     3
