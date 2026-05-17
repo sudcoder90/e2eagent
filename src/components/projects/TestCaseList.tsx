@@ -34,6 +34,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { formatDistanceToNow, format } from 'date-fns';
 import { toast } from 'sonner';
 import type { Platform } from '@/components/projects/PlatformStatsGrid';
