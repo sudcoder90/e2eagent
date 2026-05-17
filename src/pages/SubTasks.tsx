@@ -125,6 +125,10 @@ function StepEditor({
 
 export default function SubTasks() {
   const [subTasks, setSubTasks] = useState<SubTask[]>(mockSubTasks);
+  const [recommendations, setRecommendations] = useState<AIRecommendedSubTask[]>(
+    mockAIRecommendedSubTasks,
+  );
+  const [recExpanded, setRecExpanded] = useState<Record<string, boolean>>({});
   const [selectedDomain, setSelectedDomain] = useState<Domain>('Walmart+');
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [historyOpen, setHistoryOpen] = useState<Record<string, boolean>>({});
