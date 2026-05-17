@@ -159,6 +159,46 @@ export default function SubTasks() {
     [subTasks, selectedDomain],
   );
 
+  const filteredRecs = useMemo(
+    () => recommendations.filter((r) => r.domain === selectedDomain),
+    [recommendations, selectedDomain],
+  );
+
+  const acceptRecommendation = (rec: AIRecommendedSubTask) => {
+    const now = new Date();
+    setSubTasks((prev) => [
+      {
+        id: `st-${Date.now()}`,
+        name: rec.name,
+        domain: rec.domain,
+        description: rec.description,
+        createdAt: now,
+        createdBy: 'AI Recommendation',
+        successRate: 0,
+        totalRuns: 0,
+        currentVersion: 1,
+        steps: rec.steps,
+        history: [
+          {
+            version: 1,
+            editedAt: now,
+            editedBy: 'AI Recommendation',
+            changeNote: `Accepted from AI recommendation (consolidated ${rec.sourceCount} variants)`,
+            steps: rec.steps,
+          },
+        ],
+      },
+      ...prev,
+    ]);
+    setRecommendations((prev) => prev.filter((r) => r.id !== rec.id));
+    toast.success(`"${rec.name}" added to ${rec.domain} sub-tasks`);
+  };
+
+  const dismissRecommendation = (rec: AIRecommendedSubTask) => {
+    setRecommendations((prev) => prev.filter((r) => r.id !== rec.id));
+    toast.message(`Dismissed "${rec.name}"`);
+  };
+
   const openCreate = () => {
     setEditingId(null);
     setDuplicateWarning(null);
