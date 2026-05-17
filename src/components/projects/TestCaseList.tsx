@@ -233,6 +233,33 @@ function TestCaseItem({ testCase, isSelected, onSelectChange, selectedPlatform }
                     <span className="text-xs">Video</span>
                   </Button>
                 )}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="gap-1 h-8 px-2 text-destructive hover:text-destructive"
+                  title="Create Jira bug ticket"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setBugDialogOpen(true);
+                  }}
+                >
+                  <Bug className="w-3.5 h-3.5" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="gap-1 h-8 px-2 text-warning hover:text-warning relative"
+                  title="Potential bug tickets to review"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPotentialOpen(true);
+                  }}
+                >
+                  <SparklesIcon className="w-3.5 h-3.5" />
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-warning text-[9px] font-semibold text-warning-foreground flex items-center justify-center">
+                    3
+                  </span>
+                </Button>
                 <Button 
                   size="sm" 
                   variant="ghost" 
