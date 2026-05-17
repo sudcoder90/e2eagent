@@ -24,8 +24,11 @@ import {
   Monitor,
   Smartphone,
   Tablet,
-  History
+  History,
+  Bug,
+  Sparkles as SparklesIcon
 } from 'lucide-react';
+import { CreateBugTicketDialog, PotentialBugsDialog } from './BugTicketDialogs';
 import {
   DropdownMenu,
   DropdownMenuContent,
