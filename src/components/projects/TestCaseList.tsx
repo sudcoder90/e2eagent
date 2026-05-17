@@ -346,6 +346,8 @@ function TestCaseItem({ testCase, isSelected, onSelectChange, selectedPlatform }
 
 export function TestCaseList({ testCases, selectedPlatform }: TestCaseListProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [runPlatforms, setRunPlatforms] = useState<Set<RunPlatform>>(new Set());
+  const [runMenuOpen, setRunMenuOpen] = useState(false);
 
   const allSelected = testCases.length > 0 && selectedIds.size === testCases.length;
   const someSelected = selectedIds.size > 0;
@@ -367,9 +369,29 @@ export function TestCaseList({ testCases, selectedPlatform }: TestCaseListProps)
     }
   };
 
-  const handleBulkRun = (platform: RunPlatform) => {
+  const toggleRunPlatform = (platform: RunPlatform, checked: boolean) => {
+    setRunPlatforms(prev => {
+      const next = new Set(prev);
+      if (platform === 'All Platforms') {
+        if (checked) {
+          return new Set<RunPlatform>(['All Platforms', 'Web', 'Android', 'iOS']);
+        }
+        return new Set();
+      }
+      if (checked) next.add(platform);
+      else next.delete(platform);
+      next.delete('All Platforms');
+      return next;
+    });
+  };
+
+  const handleBulkRun = () => {
     const count = selectedIds.size;
-    toast.success(`Running ${count} test${count !== 1 ? 's' : ''} on ${platform}`);
+    const platforms = Array.from(runPlatforms).filter(p => p !== 'All Platforms');
+    if (count === 0 || platforms.length === 0) return;
+    toast.success(`Running ${count} test${count !== 1 ? 's' : ''} on ${platforms.join(', ')}`);
+    setRunMenuOpen(false);
+    setRunPlatforms(new Set());
   };
 
   return (
