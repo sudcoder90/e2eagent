@@ -343,6 +343,16 @@ function TestCaseItem({ testCase, isSelected, onSelectChange, selectedPlatform }
           </div>
         </CollapsibleContent>
       </Collapsible>
+      <CreateBugTicketDialog
+        open={bugDialogOpen}
+        onOpenChange={setBugDialogOpen}
+        testCaseName={testCase.name}
+      />
+      <PotentialBugsDialog
+        open={potentialOpen}
+        onOpenChange={setPotentialOpen}
+        testCaseName={testCase.name}
+      />
     </div>
   );
 }
