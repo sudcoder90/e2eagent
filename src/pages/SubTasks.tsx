@@ -39,6 +39,11 @@ import {
   User,
   Calendar as CalIcon,
   TrendingUp,
+  Sparkles,
+  Check,
+  X,
+  Users,
+  Lightbulb,
 } from 'lucide-react';
 import {
   DOMAINS,
@@ -47,6 +52,10 @@ import {
   SubTaskStep,
   mockSubTasks,
 } from '@/data/mockSubTasks';
+import {
+  AIRecommendedSubTask,
+  mockAIRecommendedSubTasks,
+} from '@/data/mockAIRecommendedSubTasks';
 
 const platforms: Array<'Web' | 'Native' | 'Both'> = ['Both', 'Web', 'Native'];
 
