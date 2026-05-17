@@ -139,6 +139,8 @@ interface TestCaseItemProps {
 
 function TestCaseItem({ testCase, isSelected, onSelectChange, selectedPlatform }: TestCaseItemProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [bugDialogOpen, setBugDialogOpen] = useState(false);
+  const [potentialOpen, setPotentialOpen] = useState(false);
   const showVersion = selectedPlatform === 'iOS' || selectedPlatform === 'Android';
   const version = showVersion ? getVersionForPlatform(selectedPlatform, testCase.id) : undefined;
   const recentRuns = testCase.lastRun ? generateMockRecentRuns(testCase, selectedPlatform) : [];
