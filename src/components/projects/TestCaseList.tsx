@@ -418,27 +418,44 @@ export function TestCaseList({ testCases, selectedPlatform }: TestCaseListProps)
           >
             Clear Selection
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm" variant="glow" className="gap-1.5">
+          <Popover open={runMenuOpen} onOpenChange={setRunMenuOpen}>
+            <PopoverTrigger asChild>
+              <Button size="sm" variant="glow" className="gap-1.5" disabled={!someSelected}>
                 <Play className="w-3.5 h-3.5" />
                 Run Selected ({selectedIds.size})
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {platformOptions.map((opt) => (
-                <DropdownMenuItem
-                  key={opt.value}
-                  onClick={() => handleBulkRun(opt.value)}
-                  className="gap-2"
-                  disabled={!someSelected}
-                >
-                  {opt.icon}
-                  {opt.label}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-56 p-2">
+              <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                Select platforms
+              </div>
+              <div className="space-y-1">
+                {platformOptions.map((opt) => (
+                  <label
+                    key={opt.value}
+                    className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-accent cursor-pointer text-sm"
+                  >
+                    <Checkbox
+                      checked={runPlatforms.has(opt.value)}
+                      onCheckedChange={(checked) => toggleRunPlatform(opt.value, !!checked)}
+                    />
+                    {opt.icon}
+                    <span>{opt.label}</span>
+                  </label>
+                ))}
+              </div>
+              <Button
+                size="sm"
+                variant="glow"
+                className="w-full mt-2 gap-1.5"
+                disabled={runPlatforms.size === 0}
+                onClick={handleBulkRun}
+              >
+                <Play className="w-3.5 h-3.5" />
+                Run ({selectedIds.size})
+              </Button>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
