@@ -8,7 +8,8 @@ import {
   Sparkles,
   ChevronLeft,
   ChevronRight,
-  Brain
+  Brain,
+  ListChecks
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -19,6 +20,7 @@ const navItems = [
   { icon: Calendar, label: 'Scheduling', path: '/scheduling', badge: null },
   { icon: ClipboardCheck, label: 'Evaluations', path: '/evaluations', badge: null },
   { icon: Brain, label: 'Agent Memory', path: '/memory', badge: null },
+  { icon: ListChecks, label: 'Define Sub-tasks', path: '/sub-tasks', badge: null },
   { icon: AlertTriangle, label: 'User Input', path: '/drifts', badge: 2 },
 ];
 
