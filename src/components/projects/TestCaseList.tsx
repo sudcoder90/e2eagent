@@ -330,14 +330,9 @@ function TestCaseItem({ testCase, isSelected, onSelectChange, selectedPlatform }
           </div>
         </CollapsibleContent>
       </Collapsible>
-      <CreateBugTicketDialog
-        open={bugDialogOpen}
-        onOpenChange={setBugDialogOpen}
-        testCaseName={testCase.name}
-      />
-      <PotentialBugsDialog
-        open={potentialOpen}
-        onOpenChange={setPotentialOpen}
+      <TicketsDialog
+        open={ticketsOpen}
+        onOpenChange={setTicketsOpen}
         testCaseName={testCase.name}
       />
     </div>
