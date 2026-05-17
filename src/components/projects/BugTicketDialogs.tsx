@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
+import {
 import {
   Select,
   SelectContent,
@@ -490,9 +490,7 @@ export function TicketsDialog({ open, onOpenChange, testCaseName }: TicketsDialo
                           Assigned to <span className="text-foreground">{t.assignee}</span> · Created {formatDistanceToNow(t.createdAt, { addSuffix: true })}
                         </p>
                       </div>
-                      <span className="text-xs text-muted-foreground flex-shrink-0">{t.progress}%</span>
                     </div>
-                    <Progress value={t.progress} className="h-1.5 mt-2" />
                     <p className="text-[11px] text-muted-foreground mt-1.5 italic">{t.lastUpdate}</p>
                   </div>
                 ))}
