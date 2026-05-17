@@ -375,6 +375,151 @@ export default function SubTasks() {
           </AlertDescription>
         </Alert>
 
+        {/* AI Recommended Sub-tasks */}
+        <div className="rounded-xl border border-primary/30 bg-gradient-to-br from-primary/5 via-card to-card overflow-hidden">
+          <div className="p-4 border-b border-border flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-primary/15 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-foreground flex items-center gap-2">
+                  AI Recommended Sub-tasks
+                  <Badge variant="secondary" className="text-[10px]">Beta</Badge>
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  Consolidated playbooks generated from patterns across user-written instructions in {selectedDomain}.
+                </p>
+              </div>
+            </div>
+            <Badge variant="outline">{filteredRecs.length} suggestions</Badge>
+          </div>
+
+          {filteredRecs.length === 0 ? (
+            <div className="p-8 text-center text-sm text-muted-foreground">
+              No new recommendations for {selectedDomain}. We'll surface new suggestions as more users write similar instructions.
+            </div>
+          ) : (
+            <div className="divide-y divide-border">
+              {filteredRecs.map((rec) => {
+                const isOpen = !!recExpanded[rec.id];
+                return (
+                  <div key={rec.id} className="p-4">
+                    <div className="flex items-start gap-3">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 mt-0.5"
+                        onClick={() =>
+                          setRecExpanded((p) => ({ ...p, [rec.id]: !p[rec.id] }))
+                        }
+                      >
+                        {isOpen ? (
+                          <ChevronDown className="w-4 h-4" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4" />
+                        )}
+                      </Button>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="font-semibold text-foreground">{rec.name}</h3>
+                          <Badge variant="outline">{rec.domain}</Badge>
+                          <Badge variant="secondary" className="gap-1">
+                            <Sparkles className="w-3 h-3" />
+                            {rec.confidence}% confidence
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {rec.description}
+                        </p>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2 flex-wrap">
+                          <span className="flex items-center gap-1">
+                            <Users className="w-3 h-3" />
+                            Consolidates {rec.sourceCount} user variants
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <ListChecks className="w-3 h-3" />
+                            {rec.steps.length} steps
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <CalIcon className="w-3 h-3" />
+                            {format(rec.createdAt, 'MMM d, yyyy')}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => dismissRecommendation(rec)}
+                        >
+                          <X className="w-4 h-4 mr-1" /> Dismiss
+                        </Button>
+                        <Button
+                          variant="glow"
+                          size="sm"
+                          onClick={() => acceptRecommendation(rec)}
+                        >
+                          <Check className="w-4 h-4 mr-1" /> Accept
+                        </Button>
+                      </div>
+                    </div>
+
+                    {isOpen && (
+                      <div className="mt-3 ml-11 space-y-4">
+                        <div className="rounded-lg border border-border bg-background/40 p-3">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Lightbulb className="w-3.5 h-3.5 text-primary" />
+                            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                              Why this recommendation
+                            </span>
+                          </div>
+                          <p className="text-sm">{rec.rationale}</p>
+                        </div>
+
+                        <div>
+                          <h4 className="text-sm font-semibold mb-2">Key learnings incorporated</h4>
+                          <ul className="space-y-1">
+                            {rec.keyLearnings.map((k, i) => (
+                              <li key={i} className="flex gap-2 items-start text-sm">
+                                <Check className="w-3.5 h-3.5 text-primary mt-1 shrink-0" />
+                                <span>{k}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div>
+                          <h4 className="text-sm font-semibold mb-2">Proposed steps</h4>
+                          <ol className="space-y-2">
+                            {rec.steps.map((s, i) => (
+                              <li key={s.id} className="flex gap-3 items-start text-sm">
+                                <span className="font-mono text-xs text-muted-foreground mt-0.5 w-6">
+                                  {i + 1}.
+                                </span>
+                                <span className="flex-1">{s.description}</span>
+                                {s.platform && (
+                                  <Badge variant="outline" className="text-[10px]">
+                                    {s.platform}
+                                  </Badge>
+                                )}
+                              </li>
+                            ))}
+                          </ol>
+                        </div>
+
+                        <div className="text-xs text-muted-foreground">
+                          Contributors: {rec.contributors.join(', ')}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
         {/* List */}
         {filtered.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border p-12 text-center text-muted-foreground">
